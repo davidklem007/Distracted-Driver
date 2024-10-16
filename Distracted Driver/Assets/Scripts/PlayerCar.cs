@@ -30,6 +30,7 @@ public class PlayerCar : MonoBehaviour
 
     //Moves lane by lane, bounded by lanes
     //Has to switch lanes before another input is accepted
+    //First input has to be released for new input to be detected
     void MoveHorizontal(float input)
     {
         if (input == -1 && horizontalPressed)
