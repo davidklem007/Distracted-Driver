@@ -17,7 +17,11 @@ public class RoadLines : MonoBehaviour
     {
         //Road lines scroll forever, reset at top once they reach the bottom
         Scroll();
-        if(transform.position.y < -9.86f)
+    }
+
+    private void FixedUpdate()
+    {
+        if (transform.position.y < -9.86f)
         {
             transform.position = new Vector3(-4.45f, 9.86f, 0);
         }
