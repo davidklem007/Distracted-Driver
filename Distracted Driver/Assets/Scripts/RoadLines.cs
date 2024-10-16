@@ -15,6 +15,7 @@ public class RoadLines : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Road lines scroll forever, reset at top once they reach the bottom
         Scroll();
         if(transform.position.y < -9.86f)
         {
