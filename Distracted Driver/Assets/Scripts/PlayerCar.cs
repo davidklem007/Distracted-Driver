@@ -13,7 +13,7 @@ public class PlayerCar : MonoBehaviour
     Vector3 newPos;
     [SerializeField] float verticalSpeed;
     float rightBounds = -2.72f;
-    float leftBounds = -6.12f;
+    float leftBounds = -6.14f;
     float middleBounds = -4.43f;
 
     // Start is called before the first frame update
@@ -27,6 +27,7 @@ public class PlayerCar : MonoBehaviour
     void Update()
     {
         MoveHorizontal(Input.GetAxis("Horizontal"));
+        LaneChange();
         MoveVertical(Input.GetAxis("Vertical"));
         //Debug.Log("axis: " + Input.GetAxis("Horizontal"));
         //Debug.Log("newPos: " + newPos + "\ncurPos: " + transform.position);
@@ -34,71 +35,132 @@ public class PlayerCar : MonoBehaviour
 
     }
 
-    void FixedUpdate()
-    {
-        if(transform.position.x < -6.15)
-        {
-            transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
-            left = false;
-        }
-        else if(transform.position.x > -2.75)
-        {
-            transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
-            right = false;
-        }
-    }
-
+    //Works with LaneChange()
     //Moves lane by lane, bounded by lanes
     //Has to switch lanes before another input is accepted
+    //MoveHorizontal() gets the input, and changes lane number
     //First input has to be released for new input to be detected
     void MoveHorizontal(float input)
     {
         if (input == -1 && horizontalPressed && transform.position.x > leftBounds)
         {
-            if (!left && !right)
+            if (!right)
             {
-                oldPos = transform.position;
-                newPos = new Vector3(transform.position.x - 1.70f, transform.position.y, transform.position.z);
+                left = true;
+                LaneNumChange(input);
             }
-            left = true;
             horizontalPressed = false;
         }
         else if (input == 1 && horizontalPressed && transform.position.x < rightBounds)
         {
-            if (!right && !left)
+            if (!left)
             {
-                oldPos = transform.position;
-                newPos = new Vector3(transform.position.x + 1.70f, transform.position.y, transform.position.z);
+                right = true;
+                LaneNumChange(input);
             }
-            right = true;
             horizontalPressed = false;
         }
         else if (input == 0)
         {
             horizontalPressed = true;
         }
-        if (left)
+    }
+
+    //Changes lane based on lane number and if input was recieved
+    //Assures that car ends up in correct position corresponding to the lane
+    void LaneChange()
+    {
+        //if lane number is 1 and left input recieved
+        //if car reached the correct lane position or went too far left, turn off left input and set to correct lane position
+        //if not at lane position yet, move left
+        //if left input off, if car is not in correct lane position, move to the correct position
+        if (lane == 1)
         {
-            if (!(transform.position.x <= newPos.x) && transform.position.x >= leftBounds)
+            if (left)
             {
-                transform.Translate(Vector3.left * Time.deltaTime * horizontalSpeed);
+                if (transform.position.x <= leftBounds)
+                {
+                    left = false;
+                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
+                }
+                else
+                {
+                    transform.Translate(Vector3.left * Time.deltaTime * horizontalSpeed);
+                }
             }
             else
             {
-                left = false;
+                if (transform.position.x != leftBounds)
+                {
+                    left = false;
+                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
+                }
             }
         }
-        else if (right)
+        //Like a combination of checking for lane 1 and 3 but with lane 2 bounds
+        //first checks left input, the if no left input, checks right input
+        //if no input at all, assures car is in right position
+        else if (lane == 2)
         {
-            if (!(transform.position.x >= newPos.x) && transform.position.x <= rightBounds)
+            if (left)
             {
-                transform.Translate(Vector3.right * Time.deltaTime * horizontalSpeed);
+                if (transform.position.x <= middleBounds)
+                {
+                    left = false;
+                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
+                }
+                else
+                {
+                    transform.Translate(Vector3.left * Time.deltaTime * horizontalSpeed);
+                }
+            }
+            else if (right)
+            {
+                if (transform.position.x >= middleBounds)
+                {
+                    right = false;
+                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
+                }
+                else
+                {
+                    transform.Translate(Vector3.right * Time.deltaTime * horizontalSpeed);
+                }
             }
             else
             {
-                right = false;
+                if (transform.position.x != middleBounds)
+                {
+                    left = false;
+                    right = false;
+                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
+                }
             }
         }
+        //Lane 3, same as lane 1 check but instead checks for right input with the lane 3 bounds
+        else
+        {
+            if (right)
+            {
+                if (transform.position.x >= rightBounds)
+                {
+                    right = false;
+                    transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
+                }
+                else
+                {
+                    transform.Translate(Vector3.right * Time.deltaTime * horizontalSpeed);
+                }
+            }
+            else
+            {
+                if (transform.position.x != rightBounds)
+                {
+                    right = false;
+                    transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
+                }
+            }
+        }
+
     }
 
     void MoveVertical(float input)
@@ -118,10 +180,10 @@ public class PlayerCar : MonoBehaviour
         
     }
 
-    void LaneChange(float input)
+    void LaneNumChange(float input)
     {
-        int intput = Mathf.RoundToInt(input);
-        lane = Clamp3(intput + lane);
+        int intput = (int) input;
+        lane = Clamp3(lane + intput);
     }
 
     int Clamp3(int num)
@@ -138,74 +200,5 @@ public class PlayerCar : MonoBehaviour
 
     }
 
-    void LaneClamp()
-    {
-        if(lane == 1)
-        {
-            if (left)
-            {
-                if(transform.position.x < leftBounds)
-                {
-                    left = false;
-                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
-                }
-            }
-            else
-            {
-                if (transform.position.x != leftBounds)
-                {
-                    left = false;
-                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
-                }
-            }
-        }
-        else if(lane == 2)
-        {
-            if (left)
-            {
-                if (transform.position.x < middleBounds)
-                {
-                    left = false;
-                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
-                }
-            }
-            else if(right)
-            {
-                if (transform.position.x > middleBounds)
-                {
-                    right = false;
-                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
-                }
-            }
-            else
-            {
-                if (transform.position.x != leftBounds)
-                {
-                    left = false;
-                    right = false;
-                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
-                }
-            }
-        }
-        else
-        {
-            if (right)
-            {
-                if (transform.position.x > rightBounds)
-                {
-                    right = false;
-                    transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
-                }
-            }
-            else
-            {
-                if (transform.position.x != rightBounds)
-                {
-                    right = false;
-                    transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
-                }
-            }
-        }
-            
-    }
+    
 }
