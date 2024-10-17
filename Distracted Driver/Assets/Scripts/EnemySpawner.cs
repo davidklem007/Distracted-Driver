@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    //
+    //
+    //!!to do: create prefab variants for all different enemies
+
     [SerializeField] GameObject enemyPrefab;
     float rightBounds = -2.72f;
     float leftBounds = -6.14f;
