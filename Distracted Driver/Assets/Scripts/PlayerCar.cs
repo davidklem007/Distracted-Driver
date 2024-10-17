@@ -9,29 +9,28 @@ public class PlayerCar : MonoBehaviour
     bool left = false;
     bool right = false;
     int lane = 3;
-    Vector3 oldPos;
-    Vector3 newPos;
     [SerializeField] float verticalSpeed;
     float rightBounds = -2.72f;
     float leftBounds = -6.14f;
     float middleBounds = -4.43f;
+    bool stop = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        oldPos = transform.position;
-        newPos = transform.position;
+        EventManager.GameOver.AddListener(Stop);
     }
 
     // Update is called once per frame
     void Update()
     {
-        MoveHorizontal(Input.GetAxis("Horizontal"));
-        LaneChange();
-        MoveVertical(Input.GetAxis("Vertical"));
-        //Debug.Log("axis: " + Input.GetAxis("Horizontal"));
-        //Debug.Log("newPos: " + newPos + "\ncurPos: " + transform.position);
 
+        if (!stop)
+        {
+            MoveHorizontal(Input.GetAxis("Horizontal"));
+            LaneChange();
+            MoveVertical(Input.GetAxis("Vertical"));
+        }
 
     }
 
@@ -200,5 +199,20 @@ public class PlayerCar : MonoBehaviour
 
     }
 
-    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Destroy(collision.gameObject);
+            EventManager.GameOver.Invoke();
+        }
+
+    }
+
+   void Stop()
+   {
+        stop = true;
+   }
+
+
 }

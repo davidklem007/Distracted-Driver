@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoadLines : MonoBehaviour
+public class EnemyCar : MonoBehaviour
 {
     [SerializeField] float speed;
     bool stop = false;
@@ -18,25 +18,16 @@ public class RoadLines : MonoBehaviour
     {
         if (!stop)
         {
-            Scroll();
+            transform.Translate(new Vector3(0, -speed, 0) * Time.deltaTime);
         }
-    }
-
-    private void FixedUpdate()
-    {
-        if (transform.position.y < -9.86f)
+        if(transform.position.y < -6)
         {
-            transform.position = new Vector3(-4.45f, 9.86f, 0);
+            Destroy(gameObject);
         }
     }
 
-    void Scroll()
+    void Stop()
     {
-        transform.Translate(Vector2.down * speed * Time.deltaTime);
+        stop = true;
     }
-
-   void Stop()
-   {
-        stop = true; 
-   }
 }
