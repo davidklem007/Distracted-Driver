@@ -8,7 +8,7 @@ public class PlayerCar : MonoBehaviour
     bool horizontalPressed = false;
     bool left = false;
     bool right = false;
-    int lane = 3;
+    int lane = 2;
     [SerializeField] float verticalSpeed;
     float rightBounds = -2.72f;
     float leftBounds = -6.14f;
