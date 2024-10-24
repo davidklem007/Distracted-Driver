@@ -101,11 +101,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 450
-        width: 150
-        height: 150
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -121,12 +121,12 @@ TextureImporter:
       name: square car models_1
       rect:
         serializedVersion: 2
-        x: 150
-        y: 450
-        width: 150
-        height: 150
+        x: 36
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -142,12 +142,12 @@ TextureImporter:
       name: square car models_2
       rect:
         serializedVersion: 2
-        x: 300
-        y: 450
-        width: 150
-        height: 150
+        x: 72
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -163,12 +163,12 @@ TextureImporter:
       name: square car models_3
       rect:
         serializedVersion: 2
-        x: 450
-        y: 450
-        width: 150
-        height: 150
+        x: 108
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -184,12 +184,12 @@ TextureImporter:
       name: square car models_4
       rect:
         serializedVersion: 2
-        x: 600
-        y: 450
-        width: 150
-        height: 150
+        x: 144
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -205,12 +205,12 @@ TextureImporter:
       name: square car models_5
       rect:
         serializedVersion: 2
-        x: 750
-        y: 450
-        width: 150
-        height: 150
+        x: 180
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -226,12 +226,12 @@ TextureImporter:
       name: square car models_6
       rect:
         serializedVersion: 2
-        x: 900
-        y: 450
-        width: 150
-        height: 150
+        x: 216
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -247,12 +247,12 @@ TextureImporter:
       name: square car models_7
       rect:
         serializedVersion: 2
-        x: 1050
-        y: 450
-        width: 150
-        height: 150
+        x: 252
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -268,12 +268,12 @@ TextureImporter:
       name: square car models_8
       rect:
         serializedVersion: 2
-        x: 1200
-        y: 450
-        width: 150
-        height: 150
+        x: 288
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -289,12 +289,12 @@ TextureImporter:
       name: square car models_9
       rect:
         serializedVersion: 2
-        x: 1350
-        y: 450
-        width: 150
-        height: 150
+        x: 324
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -310,12 +310,12 @@ TextureImporter:
       name: square car models_10
       rect:
         serializedVersion: 2
-        x: 1500
-        y: 450
-        width: 150
-        height: 150
+        x: 360
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -331,12 +331,12 @@ TextureImporter:
       name: square car models_11
       rect:
         serializedVersion: 2
-        x: 1650
-        y: 450
-        width: 150
-        height: 150
+        x: 396
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -352,12 +352,12 @@ TextureImporter:
       name: square car models_12
       rect:
         serializedVersion: 2
-        x: 1800
-        y: 450
-        width: 150
-        height: 150
+        x: 432
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -373,12 +373,12 @@ TextureImporter:
       name: square car models_13
       rect:
         serializedVersion: 2
-        x: 1950
-        y: 450
-        width: 150
-        height: 150
+        x: 468
+        y: 108
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -395,11 +395,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 300
-        width: 150
-        height: 150
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -415,12 +415,12 @@ TextureImporter:
       name: square car models_15
       rect:
         serializedVersion: 2
-        x: 150
-        y: 300
-        width: 150
-        height: 150
+        x: 36
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -436,12 +436,12 @@ TextureImporter:
       name: square car models_16
       rect:
         serializedVersion: 2
-        x: 300
-        y: 300
-        width: 150
-        height: 150
+        x: 72
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -457,12 +457,12 @@ TextureImporter:
       name: square car models_17
       rect:
         serializedVersion: 2
-        x: 450
-        y: 300
-        width: 150
-        height: 150
+        x: 108
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -478,12 +478,12 @@ TextureImporter:
       name: square car models_18
       rect:
         serializedVersion: 2
-        x: 600
-        y: 300
-        width: 150
-        height: 150
+        x: 144
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -499,12 +499,12 @@ TextureImporter:
       name: square car models_19
       rect:
         serializedVersion: 2
-        x: 750
-        y: 300
-        width: 150
-        height: 150
+        x: 180
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -520,12 +520,12 @@ TextureImporter:
       name: square car models_20
       rect:
         serializedVersion: 2
-        x: 900
-        y: 300
-        width: 150
-        height: 150
+        x: 216
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -541,12 +541,12 @@ TextureImporter:
       name: square car models_21
       rect:
         serializedVersion: 2
-        x: 1050
-        y: 300
-        width: 150
-        height: 150
+        x: 252
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -562,12 +562,12 @@ TextureImporter:
       name: square car models_22
       rect:
         serializedVersion: 2
-        x: 1200
-        y: 300
-        width: 150
-        height: 150
+        x: 288
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -583,12 +583,12 @@ TextureImporter:
       name: square car models_23
       rect:
         serializedVersion: 2
-        x: 1350
-        y: 300
-        width: 150
-        height: 150
+        x: 324
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -604,12 +604,12 @@ TextureImporter:
       name: square car models_24
       rect:
         serializedVersion: 2
-        x: 1500
-        y: 300
-        width: 150
-        height: 150
+        x: 360
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -625,12 +625,12 @@ TextureImporter:
       name: square car models_25
       rect:
         serializedVersion: 2
-        x: 1650
-        y: 300
-        width: 150
-        height: 150
+        x: 396
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -646,12 +646,12 @@ TextureImporter:
       name: square car models_26
       rect:
         serializedVersion: 2
-        x: 1800
-        y: 300
-        width: 150
-        height: 150
+        x: 432
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -667,12 +667,12 @@ TextureImporter:
       name: square car models_27
       rect:
         serializedVersion: 2
-        x: 1950
-        y: 300
-        width: 150
-        height: 150
+        x: 468
+        y: 72
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -689,11 +689,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 150
-        width: 150
-        height: 150
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -709,12 +709,12 @@ TextureImporter:
       name: square car models_29
       rect:
         serializedVersion: 2
-        x: 150
-        y: 150
-        width: 150
-        height: 150
+        x: 36
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -730,12 +730,12 @@ TextureImporter:
       name: square car models_30
       rect:
         serializedVersion: 2
-        x: 300
-        y: 150
-        width: 150
-        height: 150
+        x: 72
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -751,12 +751,12 @@ TextureImporter:
       name: square car models_31
       rect:
         serializedVersion: 2
-        x: 450
-        y: 150
-        width: 150
-        height: 150
+        x: 108
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -772,12 +772,12 @@ TextureImporter:
       name: square car models_32
       rect:
         serializedVersion: 2
-        x: 600
-        y: 150
-        width: 150
-        height: 150
+        x: 144
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -793,12 +793,12 @@ TextureImporter:
       name: square car models_33
       rect:
         serializedVersion: 2
-        x: 750
-        y: 150
-        width: 150
-        height: 150
+        x: 180
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -814,12 +814,12 @@ TextureImporter:
       name: square car models_34
       rect:
         serializedVersion: 2
-        x: 900
-        y: 150
-        width: 150
-        height: 150
+        x: 216
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -835,12 +835,12 @@ TextureImporter:
       name: square car models_35
       rect:
         serializedVersion: 2
-        x: 1050
-        y: 150
-        width: 150
-        height: 150
+        x: 252
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -856,12 +856,12 @@ TextureImporter:
       name: square car models_36
       rect:
         serializedVersion: 2
-        x: 1200
-        y: 150
-        width: 150
-        height: 150
+        x: 288
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -877,12 +877,12 @@ TextureImporter:
       name: square car models_37
       rect:
         serializedVersion: 2
-        x: 1350
-        y: 150
-        width: 150
-        height: 150
+        x: 324
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -898,12 +898,12 @@ TextureImporter:
       name: square car models_38
       rect:
         serializedVersion: 2
-        x: 1500
-        y: 150
-        width: 150
-        height: 150
+        x: 360
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -919,12 +919,12 @@ TextureImporter:
       name: square car models_39
       rect:
         serializedVersion: 2
-        x: 1650
-        y: 150
-        width: 150
-        height: 150
+        x: 396
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -940,12 +940,12 @@ TextureImporter:
       name: square car models_40
       rect:
         serializedVersion: 2
-        x: 1800
-        y: 150
-        width: 150
-        height: 150
+        x: 432
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -961,12 +961,12 @@ TextureImporter:
       name: square car models_41
       rect:
         serializedVersion: 2
-        x: 1950
-        y: 150
-        width: 150
-        height: 150
+        x: 468
+        y: 36
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -984,10 +984,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1003,12 +1003,12 @@ TextureImporter:
       name: square car models_43
       rect:
         serializedVersion: 2
-        x: 150
+        x: 36
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1024,12 +1024,12 @@ TextureImporter:
       name: square car models_44
       rect:
         serializedVersion: 2
-        x: 300
+        x: 72
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1045,12 +1045,12 @@ TextureImporter:
       name: square car models_45
       rect:
         serializedVersion: 2
-        x: 450
+        x: 108
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1066,12 +1066,12 @@ TextureImporter:
       name: square car models_46
       rect:
         serializedVersion: 2
-        x: 600
+        x: 144
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1087,12 +1087,12 @@ TextureImporter:
       name: square car models_47
       rect:
         serializedVersion: 2
-        x: 750
+        x: 180
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1108,12 +1108,12 @@ TextureImporter:
       name: square car models_48
       rect:
         serializedVersion: 2
-        x: 900
+        x: 216
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1129,12 +1129,12 @@ TextureImporter:
       name: square car models_49
       rect:
         serializedVersion: 2
-        x: 1050
+        x: 252
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1150,12 +1150,12 @@ TextureImporter:
       name: square car models_50
       rect:
         serializedVersion: 2
-        x: 1200
+        x: 288
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1171,12 +1171,12 @@ TextureImporter:
       name: square car models_51
       rect:
         serializedVersion: 2
-        x: 1350
+        x: 324
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1192,12 +1192,12 @@ TextureImporter:
       name: square car models_52
       rect:
         serializedVersion: 2
-        x: 1500
+        x: 360
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1213,12 +1213,12 @@ TextureImporter:
       name: square car models_53
       rect:
         serializedVersion: 2
-        x: 1650
+        x: 396
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1234,12 +1234,12 @@ TextureImporter:
       name: square car models_54
       rect:
         serializedVersion: 2
-        x: 1800
+        x: 432
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1255,12 +1255,12 @@ TextureImporter:
       name: square car models_55
       rect:
         serializedVersion: 2
-        x: 1950
+        x: 468
         y: 0
-        width: 150
-        height: 150
+        width: 36
+        height: 36
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

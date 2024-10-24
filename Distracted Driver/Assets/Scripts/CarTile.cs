@@ -6,10 +6,13 @@ public class CarTile : MonoBehaviour
 {
     bool clicked = false;
     [SerializeField] float scale;
+    int column;
+    int row;
 
     // Start is called before the first frame update
     void Start()
     {
+        //Set size of tiles
         transform.localScale = new Vector3(scale, scale, scale);
     }
 
@@ -22,17 +25,18 @@ public class CarTile : MonoBehaviour
     private void OnMouseOver()
     {
         transform.localScale = new Vector3(scale * .875f, scale * .875f, scale*.875f);
-        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 0.75f));
 
         if (Input.GetButtonDown("Select"))
         {
             if (clicked)
             {
                 clicked = false;
+                gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
             }
             else
             {
                 clicked = true;
+                gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
             }
         }
     }
@@ -40,10 +44,22 @@ public class CarTile : MonoBehaviour
     private void OnMouseExit()
     {
 
-        if (!clicked)
-        {
-            transform.localScale = new Vector3(scale, scale, scale);
-            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
-        }
+        transform.localScale = new Vector3(scale, scale, scale);
+    }
+
+    public void SetPosition(int col, int ro)
+    {
+        column = col;
+        row = ro;
+    }
+
+    public int GetRow()
+    {
+        return row;
+    }
+
+    public int GetColumn()
+    {
+        return column;
     }
 }
