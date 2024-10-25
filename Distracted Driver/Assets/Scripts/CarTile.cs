@@ -4,18 +4,23 @@ using UnityEngine;
 
 public class CarTile : MonoBehaviour
 {
+    [SerializeField] GameObject tileManagerObj;
+    TileManager tileManager;
     bool clicked = false;
     [SerializeField] float scale;
     [SerializeField] int column;
     [SerializeField] int row;
     List<GameObject> tiles;
+    int amtClicked;
     int index;
 
     // Start is called before the first frame update
     void Start()
     {
-        tiles = TileManager.tiles;
+        tiles = TileManager.tileManager.tiles;
+
         index = tiles.IndexOf(gameObject);
+        amtClicked = TileManager.tileManager.amtClicked;
 
         //Set size of tiles
         transform.localScale = new Vector3(scale, scale, scale);
@@ -24,7 +29,7 @@ public class CarTile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Debug.Log("Bart :)  " + amtClicked);
     }
 
     private void OnMouseOver()
@@ -33,15 +38,38 @@ public class CarTile : MonoBehaviour
 
         if (Input.GetButtonDown("Select"))
         {
+            amtClicked = TileManager.tileManager.amtClicked;
             if (clicked)
             {
                 clicked = false;
+                TileManager.tileManager.amtClicked--;
                 gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
             }
-            else
+            else if(!clicked && amtClicked <= 1)
             {
-                clicked = true;
-                gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                if(amtClicked == 1)
+                {
+                    if (TileManager.tileManager.isAdjacent(this))
+                    {
+                        clicked = true;
+                        TileManager.tileManager.amtClicked++;
+                        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                    }
+                    else
+                    {
+                        clicked = true;
+                        TileManager.tileManager.amtClicked++;
+                        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                        StartCoroutine(TileManager.tileManager.DeselectAll());
+                    }
+
+                }
+                else
+                {
+                    clicked = true;
+                    TileManager.tileManager.amtClicked++;
+                    gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                }
             }
         }
     }
@@ -52,7 +80,7 @@ public class CarTile : MonoBehaviour
         transform.localScale = new Vector3(scale, scale, scale);
     }
 
-    public void SetPosition(int col, int ro)
+    public void SetPosition(int ro, int col)
     {
         column = col;
         row = ro;
@@ -66,6 +94,13 @@ public class CarTile : MonoBehaviour
     public int GetColumn()
     {
         return column;
+    }
+
+    public void Deselect()
+    {
+        clicked = false;
+        TileManager.tileManager.amtClicked--;
+        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     public bool isClicked()

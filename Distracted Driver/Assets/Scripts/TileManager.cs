@@ -6,7 +6,8 @@ public class TileManager : MonoBehaviour
 {
 
     //[rows][columns]
-    public static List<GameObject> tiles;
+    public List<GameObject> tiles;
+    public int amtClicked = 0;
 
     [SerializeField] int rows;
     [SerializeField] int columns;
@@ -16,6 +17,14 @@ public class TileManager : MonoBehaviour
     [SerializeField] float spacing;
     [SerializeField] float xOffset;
     [SerializeField] float yOffset;
+    System.Predicate<GameObject> clicked;
+
+    public static TileManager tileManager;
+
+    private void Awake()
+    {
+        tileManager = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -23,13 +32,18 @@ public class TileManager : MonoBehaviour
 
         tiles = new List<GameObject>();
 
+        clicked = (GameObject g) =>
+        {
+            return g.GetComponent<CarTile>().isClicked();
+        };
+
         GridAssign();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //tiles.FindAll(GetComponent<CarTile>.isClicked);
+
     }
 
     void GridAssign()
@@ -61,12 +75,51 @@ public class TileManager : MonoBehaviour
                 tiles.Add(carTile);
             }
         }
-
-        Debug.Log("oink: " + tiles.Count);
     }
 
     Vector3 Offset(Vector3 vector)
     {
         return new Vector3(vector.x + xOffset, vector.y - yOffset, vector.x);
     }
+
+    public bool isAdjacent(CarTile newTile)
+    {
+        CarTile oldTile = tiles.Find(clicked).GetComponent<CarTile>();
+        int newColumn = newTile.GetColumn();
+        int newRow = newTile.GetRow();
+        int oldColumn = oldTile.GetColumn();
+        int oldRow = oldTile.GetRow();
+
+        //if newTile in the same column and one row above or below of oldTile
+        if (newColumn == oldColumn && (newRow == oldRow + 1 || newRow == oldRow - 1))
+        {
+            return true;
+        }
+        //if newTile in same row and one column to the left or right of oldTile
+        else if (newRow == oldRow && (newColumn == oldColumn + 1 || newColumn == oldColumn - 1))
+        {
+            return true;
+        }
+        //newTile is not directly perpendicularly adjacent to oldTile
+        {
+            return false;
+        }
+
+
+    }
+
+    bool IsMatch(CarTile tile1, CarTile tile2)
+    {
+        return false;
+    }
+
+    public IEnumerator DeselectAll()
+    {
+        yield return new WaitForSeconds(0.5f);
+        foreach(GameObject g in tiles.FindAll(clicked))
+        {
+            g.GetComponent<CarTile>().Deselect();
+        }
+    }
+
 }
