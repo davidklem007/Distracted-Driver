@@ -8,7 +8,6 @@ public class CarTile : MonoBehaviour
     [SerializeField] float scale;
     [SerializeField] int column;
     [SerializeField] int row;
-    [SerializeField] GameObject tileManager;
     List<GameObject> tiles;
     int index;
 
@@ -30,7 +29,7 @@ public class CarTile : MonoBehaviour
 
     private void OnMouseOver()
     {
-        transform.localScale = new Vector3(scale * .875f, scale * .875f, scale * .875f);
+        transform.localScale = new Vector3(scale * 1.15f, scale * 1.15f, scale * 1.15f);
 
         if (Input.GetButtonDown("Select"))
         {
@@ -67,5 +66,10 @@ public class CarTile : MonoBehaviour
     public int GetColumn()
     {
         return column;
+    }
+
+    public bool isClicked()
+    {
+        return clicked;
     }
 }
