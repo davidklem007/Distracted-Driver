@@ -6,8 +6,8 @@ public class CarTile : MonoBehaviour
 {
     bool clicked = false;
     [SerializeField] float scale;
-    int column;
-    int row;
+    [SerializeField] int column;
+    [SerializeField] int row;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +24,7 @@ public class CarTile : MonoBehaviour
 
     private void OnMouseOver()
     {
-        transform.localScale = new Vector3(scale * .875f, scale * .875f, scale*.875f);
+        transform.localScale = new Vector3(scale * .875f, scale * .875f, scale * .875f);
 
         if (Input.GetButtonDown("Select"))
         {
