@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
+
     //[rows][columns]
+    public static List<GameObject> tiles;
+
     [SerializeField] int rows;
     [SerializeField] int columns;
-    List<GameObject> tiles;
     GameObject[] tilePrefabs;
     [SerializeField] GameObject bounds;
 
@@ -27,7 +29,7 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //tiles.FindAll(GetComponent<CarTile>.isClicked);
     }
 
     void GridAssign()
@@ -59,6 +61,8 @@ public class TileManager : MonoBehaviour
                 tiles.Add(carTile);
             }
         }
+
+        Debug.Log("oink: " + tiles.Count);
     }
 
     Vector3 Offset(Vector3 vector)

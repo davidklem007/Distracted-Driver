@@ -144,3 +144,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scale: 1.75
+  column: 0
+  row: 0
+  tileManager: {fileID: 6835738737593381353, guid: 1443e915753c4485ea7a157eb136d9f2, type: 3}

@@ -8,10 +8,16 @@ public class CarTile : MonoBehaviour
     [SerializeField] float scale;
     [SerializeField] int column;
     [SerializeField] int row;
+    [SerializeField] GameObject tileManager;
+    List<GameObject> tiles;
+    int index;
 
     // Start is called before the first frame update
     void Start()
     {
+        tiles = TileManager.tiles;
+        index = tiles.IndexOf(gameObject);
+
         //Set size of tiles
         transform.localScale = new Vector3(scale, scale, scale);
     }
