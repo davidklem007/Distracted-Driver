@@ -202,14 +202,16 @@ public class TileManager : MonoBehaviour
             }
             else
             {
-                if(IsAdjacentColumn(carTile, tile1))
+                if(IsAdjacentColumn(tile1, carTile))
                 {
                     matchingRow1++;
                 }
-                else if (IsAdjacentRow(carTile, tile1))
+                else if (IsAdjacentRow(tile1, carTile))
                 {
                     matchingColumn1++;
                 }
+                //todo create list of all connected matching tiles
+                //maybe instead of checking all tiles that look the same, check all adjacent tiles first
             }
         }
 
@@ -225,11 +227,11 @@ public class TileManager : MonoBehaviour
             }
             else
             {
-                if (IsAdjacentColumn(carTile, tile2))
+                if (IsAdjacentColumn(tile2, carTile))
                 {
                     matchingRow2++;
                 }
-                else if (IsAdjacentRow(carTile, tile2))
+                else if (IsAdjacentRow(tile2, carTile))
                 {
                     matchingColumn2++;
                 }
