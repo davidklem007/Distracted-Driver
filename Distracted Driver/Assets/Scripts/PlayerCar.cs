@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerCar : MonoBehaviour
 {
     [SerializeField] float horizontalSpeed;
-    bool horizontalPressed = false;
-    bool left = false;
-    bool right = false;
+    bool isMovingHorizontally = false;
     int lane = 2;
     [SerializeField] float verticalSpeed;
     float rightBounds = -2.72f;
@@ -19,6 +18,7 @@ public class PlayerCar : MonoBehaviour
     void Start()
     {
         EventManager.GameOver.AddListener(Stop);
+        LaneChange();
     }
 
     // Update is called once per frame
@@ -28,138 +28,71 @@ public class PlayerCar : MonoBehaviour
         if (!stop)
         {
             MoveHorizontal(Input.GetAxis("Horizontal"));
-            LaneChange();
             MoveVertical(Input.GetAxis("Vertical"));
         }
 
     }
 
-    //Works with LaneChange()
-    //Moves lane by lane, bounded by lanes
-    //Has to switch lanes before another input is accepted
-    //MoveHorizontal() gets the input, and changes lane number
-    //First input has to be released for new input to be detected
+    //Gets horizontal input and changes lane number, then moves car lanes
     void MoveHorizontal(float input)
     {
-        if (input == -1 && horizontalPressed && transform.position.x > leftBounds)
+        //if left input
+        if (input == -1)
         {
-            if (!right)
-            {
-                left = true;
-                LaneNumChange(input);
-            }
-            horizontalPressed = false;
+            LaneNumChange(input);
+            LaneChange();
         }
-        else if (input == 1 && horizontalPressed && transform.position.x < rightBounds)
+        //if right input
+        else if (input == 1)
         {
-            if (!left)
-            {
-                right = true;
-                LaneNumChange(input);
-            }
-            horizontalPressed = false;
-        }
-        else if (input == 0)
-        {
-            horizontalPressed = true;
+            LaneNumChange(input);
+            LaneChange();
         }
     }
 
-    //Changes lane based on lane number and if input was recieved
-    //Assures that car ends up in correct position corresponding to the lane
+    //if car is not moving horizontally, change lane number
+    void LaneNumChange(float input)
+    {
+        if (!isMovingHorizontally)
+        {
+            int intput = (int)input;
+            lane = Clamp3(lane + intput);
+        }
+    }
+
+    //this is called after lane number is changed
     void LaneChange()
     {
-        //if lane number is 1 and left input recieved
-        //if car reached the correct lane position or went too far left, turn off left input and set to correct lane position
-        //if not at lane position yet, move left
-        //if left input off, if car is not in correct lane position, move to the correct position
+        //if in lane number set to lane 1, move to lane one in horizontalSpeed seconds, upda    tes whether moving horizontally or not
         if (lane == 1)
         {
-            if (left)
-            {
-                if (transform.position.x <= leftBounds)
-                {
-                    left = false;
-                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
-                }
-                else
-                {
-                    transform.Translate(Vector3.left * Time.deltaTime * horizontalSpeed);
-                }
-            }
-            else
-            {
-                if (transform.position.x != leftBounds)
-                {
-                    left = false;
-                    transform.position = new Vector3(leftBounds, transform.position.y, transform.position.z);
-                }
-            }
+            transform.DOMoveX(leftBounds, horizontalSpeed)
+                .OnStart(() => SetMovingHorizontally(true))
+                .SetEase(Ease.OutSine)
+                .OnComplete(() => SetMovingHorizontally(false));
         }
-        //Like a combination of checking for lane 1 and 3 but with lane 2 bounds
-        //first checks left input, the if no left input, checks right input
-        //if no input at all, assures car is in right position
+        //same as lane 1, but for lane 2
         else if (lane == 2)
         {
-            if (left)
-            {
-                if (transform.position.x <= middleBounds)
-                {
-                    left = false;
-                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
-                }
-                else
-                {
-                    transform.Translate(Vector3.left * Time.deltaTime * horizontalSpeed);
-                }
-            }
-            else if (right)
-            {
-                if (transform.position.x >= middleBounds)
-                {
-                    right = false;
-                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
-                }
-                else
-                {
-                    transform.Translate(Vector3.right * Time.deltaTime * horizontalSpeed);
-                }
-            }
-            else
-            {
-                if (transform.position.x != middleBounds)
-                {
-                    left = false;
-                    right = false;
-                    transform.position = new Vector3(middleBounds, transform.position.y, transform.position.z);
-                }
-            }
+            transform.DOMoveX(middleBounds, horizontalSpeed)
+                .OnStart(() => SetMovingHorizontally(true))
+                .SetEase(Ease.OutSine)
+                .OnComplete(() => SetMovingHorizontally(false));
         }
-        //Lane 3, same as lane 1 check but instead checks for right input with the lane 3 bounds
+        //same as lane 1, but for lane 3
         else
         {
-            if (right)
-            {
-                if (transform.position.x >= rightBounds)
-                {
-                    right = false;
-                    transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
-                }
-                else
-                {
-                    transform.Translate(Vector3.right * Time.deltaTime * horizontalSpeed);
-                }
-            }
-            else
-            {
-                if (transform.position.x != rightBounds)
-                {
-                    right = false;
-                    transform.position = new Vector3(rightBounds, transform.position.y, transform.position.z);
-                }
-            }
+            transform.DOMoveX(rightBounds, horizontalSpeed)
+                .OnStart(() => SetMovingHorizontally(true))
+                .SetEase(Ease.OutSine)
+                .OnComplete(() => SetMovingHorizontally(false));
         }
 
+    }
+
+    void SetMovingHorizontally(bool bol)
+    {
+        isMovingHorizontally = bol;
     }
 
     void MoveVertical(float input)
@@ -177,12 +110,6 @@ public class PlayerCar : MonoBehaviour
             transform.position = new Vector3(transform.position.x, 4.3f, transform.position.z);
         }
         
-    }
-
-    void LaneNumChange(float input)
-    {
-        int intput = (int) input;
-        lane = Clamp3(lane + intput);
     }
 
     int Clamp3(int num)

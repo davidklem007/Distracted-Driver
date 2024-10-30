@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class TileManager : MonoBehaviour
 {
@@ -44,6 +45,15 @@ public class TileManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    //creates predicate that checks for num indentifier of car tile
+    System.Predicate<GameObject> CreateNumPredicate(int num)
+    {
+        return (GameObject g) =>
+        {
+            return g.GetComponent<CarTile>().GetNum() == num;
+        };
     }
 
     void GridAssign()
@@ -115,11 +125,19 @@ public class TileManager : MonoBehaviour
         }
 
     }
-    
 
-    public IEnumerator SwapTiles(CarTile tile1, CarTile tile2)
+    //Shake and deselect both tiles
+    public void DeselectAll(CarTile tile1, CarTile tile2)
     {
-        yield return new WaitForSeconds(0.5f);
+        tile1.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30)
+            .OnComplete(tile1.GetComponent<CarTile>().Deselect);
+        tile2.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30)
+            .OnComplete(tile2.GetComponent<CarTile>().Deselect);
+    }
+
+    //Tiles swap positions, and deselected
+    public void SwapTiles(CarTile tile1, CarTile tile2)
+    {
         GameObject objTile1 = tile1.gameObject;
         GameObject objTile2 = tile2.gameObject;
 
@@ -128,24 +146,63 @@ public class TileManager : MonoBehaviour
         int col1 = tile1.GetColumn();
         int num1 = tile1.GetNum();
 
-        objTile1.transform.position = objTile2.transform.position;
         tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile2.GetNum());
+        objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
+            .SetEase(Ease.OutCubic)
+            .OnComplete(tile1.GetComponent<CarTile>().Deselect);
 
-        objTile2.transform.position = pos1;
         tile2.SetCar(row1, col1, num1);
+        objTile2.transform.DOMove(pos1, 0.2f)
+            .SetEase(Ease.OutCubic)
+            .OnComplete(tile2.GetComponent<CarTile>().Deselect);
     }
 
     //if match, delete and replace with new, if not deselect all
     public bool IsMatch3(CarTile tile1, CarTile tile2)
     {
-        return false;
-    }
+        System.Predicate<GameObject> numCheck1 = CreateNumPredicate(tile1.GetNum());
+        System.Predicate<GameObject> numCheck2 = CreateNumPredicate(tile1.GetNum());
 
-    public IEnumerator DeselectAll(CarTile tile1, CarTile tile2)
-    {
-        yield return new WaitForSeconds(0.5f);
-        tile1.GetComponent<CarTile>().Deselect();
-        tile2.GetComponent<CarTile>().Deselect();
+        List<GameObject> matching1 = tiles.FindAll(numCheck1);
+        List<GameObject> matching2 = tiles.FindAll(numCheck2);
+
+        int matches1 = 0;
+        int matches2 = 0;
+
+        foreach (GameObject objCar in matching1)
+        {
+            CarTile carTile = objCar.GetComponent<CarTile>();
+            if (carTile.Equals(tile1))
+            {
+                continue;
+            }
+            else
+            {
+                if(isAdjacent(carTile, tile1))
+                {
+                    matches1++;
+                }
+            }
+        }
+        Debug.Log("tile1 matches: " + matches1);
+        foreach (GameObject objCar in matching2)
+        {
+            CarTile carTile = objCar.GetComponent<CarTile>();
+            if (carTile.Equals(tile2))
+            {
+                continue;
+            }
+            else
+            {
+                if (isAdjacent(carTile, tile2))
+                {
+                    matches2++;
+                }
+            }
+        }
+        Debug.Log("tile2 matches: " + matches2);
+
+        return false;
     }
 
     //delete tile input and replace with new tile

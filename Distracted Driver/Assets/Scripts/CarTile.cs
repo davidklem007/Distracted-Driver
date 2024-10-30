@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CarTile : MonoBehaviour
 {
@@ -58,16 +59,14 @@ public class CarTile : MonoBehaviour
                     if (TileManager.tileManager.isAdjacent(this, otherTile))
                     {
                         Select();
-                        StartCoroutine(TileManager.tileManager.SwapTiles(this, otherTile));
-                        StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
-
-                        //to do: import DOTween and change everything over
+                        TileManager.tileManager.SwapTiles(this, otherTile);
+                        TileManager.tileManager.IsMatch3(this, otherTile);
                     }
                     //if this tile is not adjacent, deselect all
                     else
                     {
                         Select();
-                        StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
+                        DOVirtual.DelayedCall(0.3f, ()=> TileManager.tileManager.DeselectAll(this, otherTile));
                     }
 
                 }
