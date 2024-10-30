@@ -108,29 +108,37 @@ public class TileManager : MonoBehaviour
         {
             return true;
         }
-        //thisTile is not directly perpendicularly adjacent to otherTile, deselect all
+        //thisTile is not directly perpendicularly adjacent to otherTile
+        else
         {
-            StartCoroutine(DeselectAll(thisTile, otherTile));
             return false;
         }
 
+    }
+    
 
+    public IEnumerator SwapTiles(CarTile tile1, CarTile tile2)
+    {
+        yield return new WaitForSeconds(0.5f);
+        GameObject objTile1 = tile1.gameObject;
+        GameObject objTile2 = tile2.gameObject;
+
+        Vector3 pos1 = objTile1.transform.position;
+        int row1 = tile1.GetRow();
+        int col1 = tile1.GetColumn();
+        int num1 = tile1.GetNum();
+
+        objTile1.transform.position = objTile2.transform.position;
+        tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile2.GetNum());
+
+        objTile2.transform.position = pos1;
+        tile2.SetCar(row1, col1, num1);
     }
 
     //if match, delete and replace with new, if not deselect all
-    public bool CheckMatch(CarTile tile1, CarTile tile2)
+    public bool IsMatch3(CarTile tile1, CarTile tile2)
     {
-        if(tile1.GetNum() == tile2.GetNum())
-        {
-            StartCoroutine(ReplaceTile(tile1.gameObject));
-            StartCoroutine(ReplaceTile(tile2.gameObject));
-            return true;
-        }
-        else
-        {
-            StartCoroutine(DeselectAll(tile1, tile2));
-            return false;
-        }
+        return false;
     }
 
     public IEnumerator DeselectAll(CarTile tile1, CarTile tile2)

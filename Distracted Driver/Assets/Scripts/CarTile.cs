@@ -58,12 +58,16 @@ public class CarTile : MonoBehaviour
                     if (TileManager.tileManager.isAdjacent(this, otherTile))
                     {
                         Select();
-                        TileManager.tileManager.CheckMatch(this, otherTile);
+                        StartCoroutine(TileManager.tileManager.SwapTiles(this, otherTile));
+                        StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
+
+                        //to do: import DOTween and change everything over
                     }
                     //if this tile is not adjacent, deselect all
                     else
                     {
                         Select();
+                        StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
                     }
 
                 }
