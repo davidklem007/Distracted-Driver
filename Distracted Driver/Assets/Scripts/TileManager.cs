@@ -101,7 +101,7 @@ public class TileManager : MonoBehaviour
         return otherTile;
     }
 
-    public bool isAdjacent(CarTile thisTile, CarTile otherTile)
+    public bool IsAdjacent(CarTile thisTile, CarTile otherTile)
     {
         int thisColumn = thisTile.GetColumn();
         int thisRow = thisTile.GetRow();
@@ -126,6 +126,28 @@ public class TileManager : MonoBehaviour
 
     }
 
+    bool IsAdjacentColumn(CarTile thisTile, CarTile otherTile)
+    {
+        int thisColumn = thisTile.GetColumn();
+        int thisRow = thisTile.GetRow();
+        int otherColumn = otherTile.GetColumn();
+        int otherRow = otherTile.GetRow();
+
+        //if thisTile in same row and one column to the left or right of otherTile
+        return thisRow == otherRow && (thisColumn == otherColumn + 1 || thisColumn == otherColumn - 1);
+    }
+
+    bool IsAdjacentRow(CarTile thisTile, CarTile otherTile)
+    {
+        int thisColumn = thisTile.GetColumn();
+        int thisRow = thisTile.GetRow();
+        int otherColumn = otherTile.GetColumn();
+        int otherRow = otherTile.GetRow();
+
+        //if thisTile in the same column and one row above or below of otherTile
+        return thisColumn == otherColumn && (thisRow == otherRow + 1 || thisRow == otherRow - 1);
+    }
+
     //Shake and deselect both tiles
     public void DeselectAll(CarTile tile1, CarTile tile2)
     {
@@ -144,14 +166,13 @@ public class TileManager : MonoBehaviour
         Vector3 pos1 = objTile1.transform.position;
         int row1 = tile1.GetRow();
         int col1 = tile1.GetColumn();
-        int num1 = tile1.GetNum();
 
-        tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile2.GetNum());
+        tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile1.GetNum());
         objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
             .SetEase(Ease.OutCubic)
             .OnComplete(tile1.GetComponent<CarTile>().Deselect);
 
-        tile2.SetCar(row1, col1, num1);
+        tile2.SetCar(row1, col1, tile2.GetNum());
         objTile2.transform.DOMove(pos1, 0.2f)
             .SetEase(Ease.OutCubic)
             .OnComplete(tile2.GetComponent<CarTile>().Deselect);
@@ -161,13 +182,16 @@ public class TileManager : MonoBehaviour
     public bool IsMatch3(CarTile tile1, CarTile tile2)
     {
         System.Predicate<GameObject> numCheck1 = CreateNumPredicate(tile1.GetNum());
-        System.Predicate<GameObject> numCheck2 = CreateNumPredicate(tile1.GetNum());
+        System.Predicate<GameObject> numCheck2 = CreateNumPredicate(tile2.GetNum());
 
         List<GameObject> matching1 = tiles.FindAll(numCheck1);
         List<GameObject> matching2 = tiles.FindAll(numCheck2);
 
-        int matches1 = 0;
-        int matches2 = 0;
+        int matchingRow1 = 0;
+        int matchingColumn1 = 0;
+
+        int matchingRow2 = 0;
+        int matchingColumn2 = 0;
 
         foreach (GameObject objCar in matching1)
         {
@@ -178,13 +202,20 @@ public class TileManager : MonoBehaviour
             }
             else
             {
-                if(isAdjacent(carTile, tile1))
+                if(IsAdjacentColumn(carTile, tile1))
                 {
-                    matches1++;
+                    matchingRow1++;
+                }
+                else if (IsAdjacentRow(carTile, tile1))
+                {
+                    matchingColumn1++;
                 }
             }
         }
-        Debug.Log("tile1 matches: " + matches1);
+
+        Debug.Log("tile1 matchingRow: " + matchingRow1);
+        Debug.Log("tile1 matchingColumn: " + matchingColumn1);
+
         foreach (GameObject objCar in matching2)
         {
             CarTile carTile = objCar.GetComponent<CarTile>();
@@ -194,13 +225,19 @@ public class TileManager : MonoBehaviour
             }
             else
             {
-                if (isAdjacent(carTile, tile2))
+                if (IsAdjacentColumn(carTile, tile2))
                 {
-                    matches2++;
+                    matchingRow2++;
+                }
+                else if (IsAdjacentRow(carTile, tile2))
+                {
+                    matchingColumn2++;
                 }
             }
         }
-        Debug.Log("tile2 matches: " + matches2);
+
+        Debug.Log("tile2 matchingRow: " + matchingRow2);
+        Debug.Log("tile2 matchingColumn: " + matchingColumn2);
 
         return false;
     }

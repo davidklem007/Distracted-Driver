@@ -56,7 +56,7 @@ public class CarTile : MonoBehaviour
                     CarTile otherTile = TileManager.tileManager.FindOther();
 
                     //if tile is adjacent, check if match
-                    if (TileManager.tileManager.isAdjacent(this, otherTile))
+                    if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
                         Select();
                         TileManager.tileManager.SwapTiles(this, otherTile);
