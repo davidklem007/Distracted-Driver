@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CarTile : MonoBehaviour
 {
-    [SerializeField] GameObject tileManagerObj;
     TileManager tileManager;
     bool clicked = false;
     [SerializeField] float scale;
     [SerializeField] int column;
     [SerializeField] int row;
+    [SerializeField] int num;
     List<GameObject> tiles;
     int amtClicked;
     int index;
@@ -47,23 +47,40 @@ public class CarTile : MonoBehaviour
             }
             else if(!clicked && amtClicked <= 1)
             {
+                //if tile clicked is second tile selected, check if adjancent and select or deselect accordingly
                 if(amtClicked == 1)
                 {
-                    if (TileManager.tileManager.isAdjacent(this))
+                    CarTile otherTile = TileManager.tileManager.FindOther();
+
+                    if (TileManager.tileManager.isAdjacent(this, otherTile))
                     {
-                        clicked = true;
-                        TileManager.tileManager.amtClicked++;
-                        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                        if(TileManager.tileManager.IsMatch(this, otherTile))
+                        {
+                            Debug.Log("U got a match :D");
+                            clicked = true;
+                            TileManager.tileManager.amtClicked++;
+                            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                        }
+                        else
+                        {
+                            Debug.Log("Not a Match :(");
+                            clicked = true;
+                            TileManager.tileManager.amtClicked++;
+                            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                            StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
+                        }
+
                     }
                     else
                     {
                         clicked = true;
                         TileManager.tileManager.amtClicked++;
                         gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
-                        StartCoroutine(TileManager.tileManager.DeselectAll());
+                        StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
                     }
 
                 }
+                //if no other tiles clicked, select tile
                 else
                 {
                     clicked = true;
@@ -80,10 +97,11 @@ public class CarTile : MonoBehaviour
         transform.localScale = new Vector3(scale, scale, scale);
     }
 
-    public void SetPosition(int ro, int col)
+    public void SetCar(int ro, int col, int nu)
     {
         column = col;
         row = ro;
+        num = nu;
     }
 
     public int GetRow()
@@ -94,6 +112,12 @@ public class CarTile : MonoBehaviour
     public int GetColumn()
     {
         return column;
+    }
+
+    //returns car color/type number
+    public int GetNum()
+    {
+        return num;
     }
 
     public void Deselect()

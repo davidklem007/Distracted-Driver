@@ -70,7 +70,7 @@ public class TileManager : MonoBehaviour
 
                 GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
 
-                carTile.GetComponent<CarTile>().SetPosition(i, j);
+                carTile.GetComponent<CarTile>().SetCar(i, j, carNum);
 
                 tiles.Add(carTile);
             }
@@ -82,44 +82,55 @@ public class TileManager : MonoBehaviour
         return new Vector3(vector.x + xOffset, vector.y - yOffset, vector.x);
     }
 
-    public bool isAdjacent(CarTile newTile)
+    //find clicked car tile
+    public CarTile FindOther()
     {
-        CarTile oldTile = tiles.Find(clicked).GetComponent<CarTile>();
-        int newColumn = newTile.GetColumn();
-        int newRow = newTile.GetRow();
-        int oldColumn = oldTile.GetColumn();
-        int oldRow = oldTile.GetRow();
+        CarTile otherTile = tiles.Find(clicked).GetComponent<CarTile>();
+        return otherTile;
+    }
 
-        //if newTile in the same column and one row above or below of oldTile
-        if (newColumn == oldColumn && (newRow == oldRow + 1 || newRow == oldRow - 1))
+    public CarTile isAdjacent(CarTile thisTile, CarTile otherTile)
+    {
+        int thisColumn = thisTile.GetColumn();
+        int thisRow = thisTile.GetRow();
+        int otherColumn = otherTile.GetColumn();
+        int otherRow = otherTile.GetRow();
+
+        //if thisTile in the same column and one row above or below of otherTile
+        if (thisColumn == otherColumn && (thisRow == otherRow + 1 || thisRow == otherRow - 1))
         {
-            return true;
+            return otherTile;
         }
-        //if newTile in same row and one column to the left or right of oldTile
-        else if (newRow == oldRow && (newColumn == oldColumn + 1 || newColumn == oldColumn - 1))
+        //if thisTile in same row and one column to the left or right of otherTile
+        else if (thisRow == otherRow && (thisColumn == otherColumn + 1 || thisColumn == otherColumn - 1))
         {
-            return true;
+            return otherTile;
         }
-        //newTile is not directly perpendicularly adjacent to oldTile
+        //thisTile is not directly perpendicularly adjacent to otherTile
         {
-            return false;
+            return null;
         }
 
 
     }
 
-    bool IsMatch(CarTile tile1, CarTile tile2)
+    public bool IsMatch(CarTile tile1, CarTile tile2)
     {
-        return false;
+        return tile1.GetNum() == tile2.GetNum(); 
     }
 
-    public IEnumerator DeselectAll()
+    public IEnumerator DeselectAll(CarTile tile1, CarTile tile2)
     {
         yield return new WaitForSeconds(0.5f);
-        foreach(GameObject g in tiles.FindAll(clicked))
-        {
-            g.GetComponent<CarTile>().Deselect();
-        }
+        tile1.GetComponent<CarTile>().Deselect();
+        tile2.GetComponent<CarTile>().Deselect();
+    }
+
+    public IEnumerator MatchFound(CarTile tile1, CarTile tile2)
+    {
+        yield return new WaitForSeconds(0.5f);
+        tile1.GetComponent<CarTile>().Deselect();
+        tile2.GetComponent<CarTile>().Deselect();
     }
 
 }
