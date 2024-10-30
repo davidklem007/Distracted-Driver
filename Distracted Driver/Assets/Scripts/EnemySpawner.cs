@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    //
-    //
-    //!!to do: create prefab variants for all different enemies
-
     GameObject enemyPrefab;
     GameObject enemyPrefab2;
     GameObject[] enemyPrefabs;
