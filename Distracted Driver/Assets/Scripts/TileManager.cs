@@ -148,6 +148,27 @@ public class TileManager : MonoBehaviour
         return thisColumn == otherColumn && (thisRow == otherRow + 1 || thisRow == otherRow - 1);
     }
 
+    List<GameObject> GetAdjacent(CarTile carTile)
+    {
+        List<GameObject> output = new List<GameObject>();
+
+        foreach(GameObject obj in tiles)
+        {
+            CarTile curTile = obj.GetComponent<CarTile>();
+
+            if (curTile.Equals(carTile))
+            {
+                continue;
+            }
+            if(IsAdjacent(carTile, curTile))
+            {
+                output.Add(obj);
+            }
+        }
+
+        return output;
+    }
+
     //Shake and deselect both tiles
     public void DeselectAll(CarTile tile1, CarTile tile2)
     {
@@ -181,6 +202,10 @@ public class TileManager : MonoBehaviour
     //if match, delete and replace with new, if not deselect all
     public bool IsMatch3(CarTile tile1, CarTile tile2)
     {
+        //todo create list of all connected matching tiles
+        //instead of checking all tiles that look the same, check all adjacent tiles first using GetAdjacent()
+
+
         System.Predicate<GameObject> numCheck1 = CreateNumPredicate(tile1.GetNum());
         System.Predicate<GameObject> numCheck2 = CreateNumPredicate(tile2.GetNum());
 
@@ -210,8 +235,6 @@ public class TileManager : MonoBehaviour
                 {
                     matchingColumn1++;
                 }
-                //todo create list of all connected matching tiles
-                //maybe instead of checking all tiles that look the same, check all adjacent tiles first
             }
         }
 
