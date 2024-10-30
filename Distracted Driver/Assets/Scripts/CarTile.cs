@@ -38,54 +38,39 @@ public class CarTile : MonoBehaviour
 
         if (Input.GetButtonDown("Select"))
         {
+            //get number of selected tiles
             amtClicked = TileManager.tileManager.amtClicked;
+            //if tile is selected and clicked on, deselect it
             if (clicked)
             {
-                clicked = false;
-                TileManager.tileManager.amtClicked--;
-                gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
+                Deselect();
             }
+            //if tile isn't already selected and clicked on, and up to one other tile is selected
             else if(!clicked && amtClicked <= 1)
             {
-                //if tile clicked is second tile selected, check if adjancent and select or deselect accordingly
+                //if tile clicked is second tile selected
                 if(amtClicked == 1)
                 {
+                    //get other tile that's selected
                     CarTile otherTile = TileManager.tileManager.FindOther();
 
+                    //if tile is adjacent, check if match
                     if (TileManager.tileManager.isAdjacent(this, otherTile))
                     {
-                        if(TileManager.tileManager.IsMatch(this, otherTile))
-                        {
-                            Debug.Log("U got a match :D");
-                            clicked = true;
-                            TileManager.tileManager.amtClicked++;
-                            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
-                        }
-                        else
-                        {
-                            Debug.Log("Not a Match :(");
-                            clicked = true;
-                            TileManager.tileManager.amtClicked++;
-                            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
-                            StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
-                        }
-
+                        Select();
+                        TileManager.tileManager.CheckMatch(this, otherTile);
                     }
+                    //if this tile is not adjacent, deselect all
                     else
                     {
-                        clicked = true;
-                        TileManager.tileManager.amtClicked++;
-                        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
-                        StartCoroutine(TileManager.tileManager.DeselectAll(this, otherTile));
+                        Select();
                     }
 
                 }
                 //if no other tiles clicked, select tile
                 else
                 {
-                    clicked = true;
-                    TileManager.tileManager.amtClicked++;
-                    gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
+                    Select();
                 }
             }
         }
@@ -118,6 +103,13 @@ public class CarTile : MonoBehaviour
     public int GetNum()
     {
         return num;
+    }
+
+    void Select()
+    {
+        clicked = true;
+        TileManager.tileManager.amtClicked++;
+        gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 1, 1, .75f));
     }
 
     public void Deselect()

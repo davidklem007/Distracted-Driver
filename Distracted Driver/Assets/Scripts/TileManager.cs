@@ -82,6 +82,8 @@ public class TileManager : MonoBehaviour
         return new Vector3(vector.x + xOffset, vector.y - yOffset, vector.x);
     }
 
+    
+
     //find clicked car tile
     public CarTile FindOther()
     {
@@ -89,7 +91,7 @@ public class TileManager : MonoBehaviour
         return otherTile;
     }
 
-    public CarTile isAdjacent(CarTile thisTile, CarTile otherTile)
+    public bool isAdjacent(CarTile thisTile, CarTile otherTile)
     {
         int thisColumn = thisTile.GetColumn();
         int thisRow = thisTile.GetRow();
@@ -99,24 +101,36 @@ public class TileManager : MonoBehaviour
         //if thisTile in the same column and one row above or below of otherTile
         if (thisColumn == otherColumn && (thisRow == otherRow + 1 || thisRow == otherRow - 1))
         {
-            return otherTile;
+            return true;
         }
         //if thisTile in same row and one column to the left or right of otherTile
         else if (thisRow == otherRow && (thisColumn == otherColumn + 1 || thisColumn == otherColumn - 1))
         {
-            return otherTile;
+            return true;
         }
-        //thisTile is not directly perpendicularly adjacent to otherTile
+        //thisTile is not directly perpendicularly adjacent to otherTile, deselect all
         {
-            return null;
+            StartCoroutine(DeselectAll(thisTile, otherTile));
+            return false;
         }
 
 
     }
 
-    public bool IsMatch(CarTile tile1, CarTile tile2)
+    //if match, delete and replace with new, if not deselect all
+    public bool CheckMatch(CarTile tile1, CarTile tile2)
     {
-        return tile1.GetNum() == tile2.GetNum(); 
+        if(tile1.GetNum() == tile2.GetNum())
+        {
+            StartCoroutine(ReplaceTile(tile1.gameObject));
+            StartCoroutine(ReplaceTile(tile2.gameObject));
+            return true;
+        }
+        else
+        {
+            StartCoroutine(DeselectAll(tile1, tile2));
+            return false;
+        }
     }
 
     public IEnumerator DeselectAll(CarTile tile1, CarTile tile2)
@@ -126,11 +140,29 @@ public class TileManager : MonoBehaviour
         tile2.GetComponent<CarTile>().Deselect();
     }
 
-    public IEnumerator MatchFound(CarTile tile1, CarTile tile2)
+    //delete tile input and replace with new tile
+    IEnumerator ReplaceTile(GameObject tile)
     {
+        Vector3 position = tile.transform.position;
+        int row = tile.GetComponent<CarTile>().GetRow();
+        int col = tile.GetComponent<CarTile>().GetColumn();
+
         yield return new WaitForSeconds(0.5f);
-        tile1.GetComponent<CarTile>().Deselect();
-        tile2.GetComponent<CarTile>().Deselect();
+
+        tiles.Remove(tile);
+        tile.GetComponent<CarTile>().Deselect();
+        Destroy(tile);
+
+        yield return new WaitForSeconds(0.5f);
+
+        int carNum = Random.Range(0, tilePrefabs.Length);
+
+        GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
+
+        carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
+
+        tiles.Add(carTile);
     }
+
 
 }
