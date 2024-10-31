@@ -191,56 +191,35 @@ public class TileManager : MonoBehaviour
     }
 
     //if match, delete and replace with new, if not deselect all
-    public bool IsMatch3(CarTile tile1, CarTile tile2)
+    public List<GameObject> Match3(CarTile thisTile)
     {
-        //todo create list of all adjacent matching tiles
 
-        int matchingRow1 = 0;
-        int matchingColumn1 = 0;
+        List<GameObject> matches = new List<GameObject>();
 
-        int matchingRow2 = 0;
-        int matchingColumn2 = 0;
-
-        foreach (GameObject objCar in GetAdjacent(tile1))
+        foreach (GameObject objCar in GetAdjacent(thisTile))
         {
             CarTile carTile = objCar.GetComponent<CarTile>();
 
-            if (carTile.GetNum() == tile1.GetNum())
+            if (carTile.GetNum() == thisTile.GetNum())
             {
-                if (IsAdjacentColumn(tile1, carTile))
+                matches.Add(objCar);
+            }
+        }
+
+        //todo check if list isn't empty first
+        foreach (GameObject objCar in matches)
+        {
+            foreach(GameObject objOtherCar in Match3(objCar.GetComponent<CarTile>()))
+            {
+                if (!objOtherCar.Equals(objCar))
                 {
-                    matchingRow1++;
-                }
-                else if (IsAdjacentRow(tile1, carTile))
-                {
-                    matchingColumn1++;
+                    matches.Add(objOtherCar);
                 }
             }
         }
 
-        Debug.Log("tile1 matchingRow: " + matchingRow1);
-        Debug.Log("tile1 matchingColumn: " + matchingColumn1);
 
-        foreach (GameObject objCar in GetAdjacent(tile2))
-        {
-            CarTile carTile = objCar.GetComponent<CarTile>();
-            if(carTile.GetNum() == tile2.GetNum())
-            {
-                if (IsAdjacentColumn(tile2, carTile))
-                {
-                    matchingRow2++;
-                }
-                else if (IsAdjacentRow(tile2, carTile))
-                {
-                    matchingColumn2++;
-                }
-            }
-        }
-
-        Debug.Log("tile2 matchingRow: " + matchingRow2);
-        Debug.Log("tile2 matchingColumn: " + matchingColumn2);
-
-        return false;
+        return matches;
     }
 
     //delete tile input and replace with new tile
