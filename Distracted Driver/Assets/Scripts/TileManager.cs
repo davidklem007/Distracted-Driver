@@ -191,8 +191,12 @@ public class TileManager : MonoBehaviour
     }
 
     //if match, delete and replace with new, if not deselect all
-    public List<GameObject> Match3(CarTile thisTile)
+    public List<GameObject> Matches(CarTile thisTile, HashSet<GameObject> visited = null)
     {
+        if (visited == null)
+        {
+            visited = new HashSet<GameObject>();
+        }
 
         List<GameObject> matches = new List<GameObject>();
 
@@ -200,27 +204,35 @@ public class TileManager : MonoBehaviour
         {
             CarTile carTile = objCar.GetComponent<CarTile>();
 
-            if (carTile.GetNum() == thisTile.GetNum())
+            if (carTile.GetNum() == thisTile.GetNum() && !visited.Contains(objCar))
             {
                 matches.Add(objCar);
+                visited.Add(objCar);
             }
         }
 
-        //todo check if list isn't empty first
-        foreach (GameObject objCar in matches)
+        if(matches.Count <= 0)
         {
-            foreach(GameObject objOtherCar in Match3(objCar.GetComponent<CarTile>()))
+            return new List<GameObject>();
+        }
+        else
+        {
+            foreach (GameObject objCar in new List<GameObject>(matches))
             {
-                if (!objOtherCar.Equals(objCar))
+
+                foreach (GameObject objOtherCar in Matches(objCar.GetComponent<CarTile>(), visited))
                 {
-                    matches.Add(objOtherCar);
+                    if (!matches.Contains(objOtherCar))
+                    {
+                        matches.Add(objOtherCar);
+                    }
                 }
             }
+            return matches;
         }
-
-
-        return matches;
     }
+
+
 
     //delete tile input and replace with new tile
     IEnumerator ReplaceTile(GameObject tile)
