@@ -60,14 +60,16 @@ public class CarTile : MonoBehaviour
                     {
                         Select();
                         TileManager.tileManager.SwapTiles(this, otherTile);
-                        //TileManager.tileManager.Match3(this);
+                        TileManager.tileManager.Matches(this);
                         TileManager.tileManager.Matches(otherTile);
 
-                        foreach(GameObject g in TileManager.tileManager.Matches(this))
+                        
+                        foreach(GameObject g in TileManager.tileManager.Matches(otherTile))
                         {
                             Debug.Log("(" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
                         }
-                        //TileManager.tileManager.Match3(otherTile);
+                        
+                        TileManager.tileManager.Match3(TileManager.tileManager.Matches(otherTile));
                     }
                     //if this tile is not adjacent, deselect all
                     else

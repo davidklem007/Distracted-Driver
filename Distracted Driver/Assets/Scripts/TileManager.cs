@@ -18,7 +18,6 @@ public class TileManager : MonoBehaviour
     [SerializeField] float spacing;
     [SerializeField] float xOffset;
     [SerializeField] float yOffset;
-    System.Predicate<GameObject> clicked;
 
     public static TileManager tileManager;
 
@@ -32,11 +31,6 @@ public class TileManager : MonoBehaviour
         tilePrefabs = Resources.LoadAll<GameObject>("Car Tiles");
 
         tiles = new List<GameObject>();
-
-        clicked = (GameObject g) =>
-        {
-            return g.GetComponent<CarTile>().isClicked();
-        };
 
         GridAssign();
     }
@@ -88,7 +82,7 @@ public class TileManager : MonoBehaviour
     //find clicked car tile
     public CarTile FindOther()
     {
-        CarTile otherTile = tiles.Find(clicked).GetComponent<CarTile>();
+        CarTile otherTile = tiles.Find(obj => obj.GetComponent<CarTile>().isClicked()).GetComponent<CarTile>();
         return otherTile;
     }
 
@@ -117,28 +111,6 @@ public class TileManager : MonoBehaviour
 
     }
 
-    bool IsAdjacentColumn(CarTile thisTile, CarTile otherTile)
-    {
-        int thisColumn = thisTile.GetColumn();
-        int thisRow = thisTile.GetRow();
-        int otherColumn = otherTile.GetColumn();
-        int otherRow = otherTile.GetRow();
-
-        //if thisTile in same row and one column to the left or right of otherTile
-        return thisRow == otherRow && (thisColumn == otherColumn + 1 || thisColumn == otherColumn - 1);
-    }
-
-    bool IsAdjacentRow(CarTile thisTile, CarTile otherTile)
-    {
-        int thisColumn = thisTile.GetColumn();
-        int thisRow = thisTile.GetRow();
-        int otherColumn = otherTile.GetColumn();
-        int otherRow = otherTile.GetRow();
-
-        //if thisTile in the same column and one row above or below of otherTile
-        return thisColumn == otherColumn && (thisRow == otherRow + 1 || thisRow == otherRow - 1);
-    }
-
     List<GameObject> GetAdjacent(CarTile carTile)
     {
         List<GameObject> output = new List<GameObject>();
@@ -158,6 +130,18 @@ public class TileManager : MonoBehaviour
         }
 
         return output;
+    }
+
+    GameObject GetHorizontal(GameObject obj, int direction = 1)
+    {
+        CarTile carTile = obj.GetComponent<CarTile>();
+        return tiles.Find(tile => tile.GetComponent<CarTile>().GetColumn() == carTile.GetColumn() + direction);
+    }
+
+    GameObject GetVertical(GameObject obj, int direction = 1)
+    {
+        CarTile carTile = obj.GetComponent<CarTile>();
+        return tiles.Find(tile => tile.GetComponent<CarTile>().GetRow() == carTile.GetRow() + direction);
     }
 
     //Shake and deselect both tiles
@@ -232,7 +216,106 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public bool Match3(List<GameObject> matches)
+    {
+        List<GameObject> matches3 = new List<GameObject>();
 
+        int matched = 0;
+
+        //sort by row, then find match 3s in rows
+        matches.Sort((tile1, tile2) => tile1.GetComponent<CarTile>().GetColumn().CompareTo(tile2.GetComponent<CarTile>().GetColumn()));
+        foreach (GameObject g in matches)
+        {
+            Debug.Log("columnsort: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+        }
+
+        for (int i = 0; i < matches.Count - 1; i++)
+        {
+            if (matches[i + 1].Equals(GetHorizontal(matches[i])) && GetHorizontal(matches[i]) != null)
+            {
+                if (matched == 0)
+                {
+                    matched += 2;
+                }
+                else
+                {
+                    matched++;
+                }
+            }
+            else if(GetHorizontal(matches[i]) == null)
+            {
+                if (matched >= 3)
+                {
+                    for (int x = 0; x < matched; x++)
+                    {
+                        if (!matches3.Contains(matches[i - x]))
+                        {
+                            matches3.Add(matches[i - x]);
+                        }
+                    }
+                }
+                matched = 0;
+            }
+            else
+            {
+                if (matched >= 3)
+                {
+                    for (int x = 0; x < matched; x++)
+                    {
+                        if (!matches3.Contains(matches[i - x]))
+                        {
+                            matches3.Add(matches[i - x]);
+                        }
+                    }
+                }
+                matched = 0;
+            }
+        }
+
+
+        //sort by column, then find match 3s in columns
+        matches.Sort((tile1, tile2) => tile1.GetComponent<CarTile>().GetRow().CompareTo(tile2.GetComponent<CarTile>().GetRow()));
+        foreach (GameObject g in matches)
+        {
+            Debug.Log("rowsort: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+        }
+
+        for (int i = 0; i < matches.Count - 1; i++)
+        {
+            if (matches[i + 1].Equals(GetVertical(matches[i])))
+            {
+                if (matched == 0)
+                {
+                    matched += 2;
+                }
+                else
+                {
+                    matched++;
+                }
+            }
+            else
+            {
+                if (matched >= 3)
+                {
+                    for (int x = 0; x < matched; x++)
+                    {
+                        if (!matches3.Contains(matches[i - x]))
+                        {
+                            matches3.Add(matches[i - x]);
+                        }
+                    }
+                }
+                matched = 0;
+            }
+        }
+
+        foreach (GameObject g in matches3)
+        {
+            Debug.Log("(" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+        }
+
+        return false;
+    }
 
     //delete tile input and replace with new tile
     IEnumerator ReplaceTile(GameObject tile)
