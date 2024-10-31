@@ -47,15 +47,6 @@ public class TileManager : MonoBehaviour
 
     }
 
-    //creates predicate that checks for num indentifier of car tile
-    System.Predicate<GameObject> CreateNumPredicate(int num)
-    {
-        return (GameObject g) =>
-        {
-            return g.GetComponent<CarTile>().GetNum() == num;
-        };
-    }
-
     void GridAssign()
     {
         //gets x distance and y distance of bounds, taking into account x and y offsets
@@ -202,15 +193,7 @@ public class TileManager : MonoBehaviour
     //if match, delete and replace with new, if not deselect all
     public bool IsMatch3(CarTile tile1, CarTile tile2)
     {
-        //todo create list of all connected matching tiles
-        //instead of checking all tiles that look the same, check all adjacent tiles first using GetAdjacent()
-
-
-        System.Predicate<GameObject> numCheck1 = CreateNumPredicate(tile1.GetNum());
-        System.Predicate<GameObject> numCheck2 = CreateNumPredicate(tile2.GetNum());
-
-        List<GameObject> matching1 = tiles.FindAll(numCheck1);
-        List<GameObject> matching2 = tiles.FindAll(numCheck2);
+        //todo create list of all adjacent matching tiles
 
         int matchingRow1 = 0;
         int matchingColumn1 = 0;
@@ -218,16 +201,13 @@ public class TileManager : MonoBehaviour
         int matchingRow2 = 0;
         int matchingColumn2 = 0;
 
-        foreach (GameObject objCar in matching1)
+        foreach (GameObject objCar in GetAdjacent(tile1))
         {
             CarTile carTile = objCar.GetComponent<CarTile>();
-            if (carTile.Equals(tile1))
+
+            if (carTile.GetNum() == tile1.GetNum())
             {
-                continue;
-            }
-            else
-            {
-                if(IsAdjacentColumn(tile1, carTile))
+                if (IsAdjacentColumn(tile1, carTile))
                 {
                     matchingRow1++;
                 }
@@ -241,14 +221,10 @@ public class TileManager : MonoBehaviour
         Debug.Log("tile1 matchingRow: " + matchingRow1);
         Debug.Log("tile1 matchingColumn: " + matchingColumn1);
 
-        foreach (GameObject objCar in matching2)
+        foreach (GameObject objCar in GetAdjacent(tile2))
         {
             CarTile carTile = objCar.GetComponent<CarTile>();
-            if (carTile.Equals(tile2))
-            {
-                continue;
-            }
-            else
+            if(carTile.GetNum() == tile2.GetNum())
             {
                 if (IsAdjacentColumn(tile2, carTile))
                 {
