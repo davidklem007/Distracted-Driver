@@ -447,6 +447,7 @@ public class TileManager : MonoBehaviour
     //delete tile input and replace with new tile
     public IEnumerator ReplaceTile(GameObject tile, Tween tween = null)
     {
+        //if tween given, wait for it to complete
         if(tween != null)
         {
             yield return tween.WaitForCompletion();
@@ -480,5 +481,43 @@ public class TileManager : MonoBehaviour
             });
     }
 
+    public IEnumerator ReplaceListAndCheck(List<GameObject> list1, List<GameObject> list2 = null, Tween tween = null)
+    {
+        if (list1.Count > 0)
+        {
+            foreach (GameObject obj in list1)
+            {
+                yield return StartCoroutine(ReplaceTile(obj, tween));
+            }
+        }
+        else
+        {
+            if (list2 != null)
+            {
+                if (list2.Count > 0)
+                {
+                    foreach (GameObject obj in list2)
+                    {
+                        yield return StartCoroutine(ReplaceTile(obj, tween));
+                    }
+                }
+            }
+        }
 
+        //for every different tile type
+        for(int i = 0; i < tilePrefabs.Length; i++)
+        {
+            //get all tiles of the tile type i
+            List<GameObject> matches = Matches((tiles.Find(tile => tile.GetComponent<CarTile>().GetNum() == i)).GetComponent<CarTile>());
+            //get all match 3s of those tiles
+            List<GameObject> match3 = Match3(matches);
+
+            if(match3.Count > 0)
+            {
+                yield return StartCoroutine(ReplaceListAndCheck(match3));
+            }
+
+        }
+
+    }
 }
