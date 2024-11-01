@@ -111,6 +111,8 @@ public class TileManager : MonoBehaviour
 
     }
 
+    //Returns list of Cartile gameobjects next to given cartile
+    //loops through all tiles, adding adjacent ones to the list, and skips the given cartile
     List<GameObject> GetAdjacent(CarTile carTile)
     {
         List<GameObject> output = new List<GameObject>();
@@ -132,16 +134,18 @@ public class TileManager : MonoBehaviour
         return output;
     }
 
-    GameObject GetHorizontal(GameObject obj, int direction = 1)
+    GameObject GetHorizontalAdjacent(GameObject obj, int direction = 1)
     {
         CarTile carTile = obj.GetComponent<CarTile>();
-        return tiles.Find(tile => tile.GetComponent<CarTile>().GetColumn() == carTile.GetColumn() + direction);
+        //Find tile in column + direction, and in same row
+        return tiles.Find(tile => tile.GetComponent<CarTile>().GetColumn() == carTile.GetColumn() + direction && tile.GetComponent<CarTile>().GetRow() == carTile.GetRow());
     }
 
-    GameObject GetVertical(GameObject obj, int direction = 1)
+    GameObject GetVerticalAdjacent(GameObject obj, int direction = 1)
     {
         CarTile carTile = obj.GetComponent<CarTile>();
-        return tiles.Find(tile => tile.GetComponent<CarTile>().GetRow() == carTile.GetRow() + direction);
+        //Find tile in row + direction, and in same column
+        return tiles.Find(tile => tile.GetComponent<CarTile>().GetRow() == carTile.GetRow() + direction && tile.GetComponent<CarTile>().GetColumn() == carTile.GetColumn());
     }
 
     //Shake and deselect both tiles
@@ -174,9 +178,10 @@ public class TileManager : MonoBehaviour
             .OnComplete(tile2.GetComponent<CarTile>().Deselect);
     }
 
-    //if match, delete and replace with new, if not deselect all
+    //returns list of all connected, matching tiles of thisTile
     public List<GameObject> Matches(CarTile thisTile, HashSet<GameObject> visited = null)
     {
+        //sets up HashSet to keep track of all tiles checked
         if (visited == null)
         {
             visited = new HashSet<GameObject>();
@@ -184,10 +189,12 @@ public class TileManager : MonoBehaviour
 
         List<GameObject> matches = new List<GameObject>();
 
+        //loops through all adjacent tiles
         foreach (GameObject objCar in GetAdjacent(thisTile))
         {
             CarTile carTile = objCar.GetComponent<CarTile>();
 
+            //if the num is the same and tile has not been checked, add to visited and total matches list
             if (carTile.GetNum() == thisTile.GetNum() && !visited.Contains(objCar))
             {
                 matches.Add(objCar);
@@ -201,6 +208,7 @@ public class TileManager : MonoBehaviour
         }
         else
         {
+            //For every adjacent match, check their adjacent matches and so on
             foreach (GameObject objCar in new List<GameObject>(matches))
             {
 
@@ -216,34 +224,82 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    public bool Match3(List<GameObject> matches)
+    public List<GameObject> Match3(List<GameObject> matches)
     {
         List<GameObject> matches3 = new List<GameObject>();
 
+        //counts tiles is a set of matched tiles
         int matched = 0;
 
-        //sort by row, then find match 3s in rows
-        matches.Sort((tile1, tile2) => tile1.GetComponent<CarTile>().GetColumn().CompareTo(tile2.GetComponent<CarTile>().GetColumn()));
-        foreach (GameObject g in matches)
+        //Sort row by row, with columns in order
+        matches.Sort((tile1, tile2) =>
         {
-            Debug.Log("columnsort: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-        }
+            CarTile carTile1 = tile1.GetComponent<CarTile>();
+            CarTile carTile2 = tile2.GetComponent<CarTile>();
 
+            //compare by row
+            int rowComparison = carTile1.GetRow().CompareTo(carTile2.GetRow());
+
+            if (rowComparison == 0)
+            {
+                //if rows are the same, compare by column
+                return carTile1.GetColumn().CompareTo(carTile2.GetColumn());
+            }
+            else
+            {
+                //if not same row return the row comparison result
+                return rowComparison;
+            }
+        });
+
+        //After matches sorted by row, go through, checking 2 matches at a time
         for (int i = 0; i < matches.Count - 1; i++)
         {
-            if (matches[i + 1].Equals(GetHorizontal(matches[i])) && GetHorizontal(matches[i]) != null)
+            //get horizontally adjacent tile
+            GameObject horizontal = GetHorizontalAdjacent(matches[i]);
+
+            //if there is a horizontally adjacent tile 
+            if (horizontal != null)
             {
-                if (matched == 0)
+                //check if the horizontally adjacent tile is the same as the next tile in the list of matching tiles
+                if (matches[i + 1].GetComponent<CarTile>().Equals(GetHorizontalAdjacent(matches[i]).GetComponent<CarTile>()))
                 {
-                    matched += 2;
+                    //if there are no previous matching tiles in the row connected to the current tile,
+                    //add 2 to matched tiles count since we are counting 2 at a time we count those two tiles
+                    //if there are already matching tiles in the set, just add 1 because of the 2 that are checked, one of them was already counted for
+                    if (matched == 0)
+                    {
+                        matched += 2;
+                    }
+                    else
+                    {
+                        matched++;
+                    }
                 }
+                //if the two tiles checked aren't matching and in the same row
                 else
                 {
-                    matched++;
+                    //this is to check the tiles that came before
+                    //if there were at least three matching tiles before, add all of them to the matches3 list if they are not already in that list
+                    //then reset the matched count because we will check a new row next
+                    if (matched >= 3)
+                    {
+                        for (int x = 0; x < matched; x++)
+                        {
+                            if (!matches3.Contains(matches[i - x]))
+                            {
+                                matches3.Add(matches[i - x]);
+                            }
+                        }
+                    }
+                    matched = 0;
                 }
             }
-            else if(GetHorizontal(matches[i]) == null)
+            //if there isn't a horizontally adjacent tile (current tile is on an edge)
+            else
             {
+                //since we are at the end of the row now, add previous tiles to the match3 list if there was a match3
+                //and reset matched count to zero because we will start in a new row next
                 if (matched >= 3)
                 {
                     for (int x = 0; x < matched; x++)
@@ -255,6 +311,78 @@ public class TileManager : MonoBehaviour
                     }
                 }
                 matched = 0;
+            }
+        }
+
+        //after going through all the tiles, if there was a match3 at the end of the row this checks that and adds the matching tiles
+        if (matched >= 3)
+        {
+            for (int x = 0; x < matched; x++)
+            {
+                if (!matches3.Contains(matches[matches.Count - 1 - x]))
+                {
+                    matches3.Add(matches[matches.Count - 1 - x]);
+                }
+            }
+        }
+
+        //reset the count to check by column now
+        matched = 0;
+
+
+        //sort column by column, with rows in order
+        matches.Sort((tile1, tile2) =>
+        {
+            CarTile carTile1 = tile1.GetComponent<CarTile>();
+            CarTile carTile2 = tile2.GetComponent<CarTile>();
+
+            //compare by column
+            int columnComparison = carTile1.GetColumn().CompareTo(carTile2.GetColumn());
+
+            if (columnComparison == 0)
+            {
+                //if columns are the same, compare by row
+                return carTile1.GetRow().CompareTo(carTile2.GetRow());
+            }
+            else
+            {
+                //if not the same column return the column comparison result
+                return columnComparison;
+            }
+        });
+
+        //basically the same as the row check but going by column and using vertically adjacent tiles instead
+        for (int i = 0; i < matches.Count - 1; i++)
+        {
+            GameObject vertical = GetVerticalAdjacent(matches[i]);
+
+            if(vertical != null)
+            {
+                if (matches[i + 1].GetComponent<CarTile>().Equals(GetVerticalAdjacent(matches[i]).GetComponent<CarTile>()))
+                {
+                    if (matched == 0)
+                    {
+                        matched += 2;
+                    }
+                    else
+                    {
+                        matched++;
+                    }
+                }
+                else
+                {
+                    if (matched >= 3)
+                    {
+                        for (int x = 0; x < matched; x++)
+                        {
+                            if (!matches3.Contains(matches[i - x]))
+                            {
+                                matches3.Add(matches[i - x]);
+                            }
+                        }
+                    }
+                    matched = 0;
+                }
             }
             else
             {
@@ -272,49 +400,27 @@ public class TileManager : MonoBehaviour
             }
         }
 
-
-        //sort by column, then find match 3s in columns
-        matches.Sort((tile1, tile2) => tile1.GetComponent<CarTile>().GetRow().CompareTo(tile2.GetComponent<CarTile>().GetRow()));
-        foreach (GameObject g in matches)
+        if (matched >= 3)
         {
-            Debug.Log("rowsort: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-        }
-
-        for (int i = 0; i < matches.Count - 1; i++)
-        {
-            if (matches[i + 1].Equals(GetVertical(matches[i])))
+            for (int x = 0; x < matched; x++)
             {
-                if (matched == 0)
+                if (!matches3.Contains(matches[matches.Count - 1 - x]))
                 {
-                    matched += 2;
-                }
-                else
-                {
-                    matched++;
+                    matches3.Add(matches[matches.Count - 1 - x]);
                 }
             }
-            else
-            {
-                if (matched >= 3)
-                {
-                    for (int x = 0; x < matched; x++)
-                    {
-                        if (!matches3.Contains(matches[i - x]))
-                        {
-                            matches3.Add(matches[i - x]);
-                        }
-                    }
-                }
-                matched = 0;
-            }
         }
+
+        /*
+        Debug.Log("count3: " + matches3.Count);
 
         foreach (GameObject g in matches3)
         {
             Debug.Log("(" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
         }
+        */
 
-        return false;
+        return matches3;
     }
 
     //delete tile input and replace with new tile

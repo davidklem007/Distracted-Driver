@@ -8,8 +8,8 @@ public class CarTile : MonoBehaviour
     TileManager tileManager;
     bool clicked = false;
     [SerializeField] float scale;
-    [SerializeField] int column;
     [SerializeField] int row;
+    [SerializeField] int column;
     [SerializeField] int num;
     List<GameObject> tiles;
     int amtClicked;
@@ -55,21 +55,14 @@ public class CarTile : MonoBehaviour
                     //get other tile that's selected
                     CarTile otherTile = TileManager.tileManager.FindOther();
 
-                    //if tile is adjacent, check if match
+                    //if tile is adjacent, get list of all matching tiles, then use that list to get match 3s
                     if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
                         Select();
                         TileManager.tileManager.SwapTiles(this, otherTile);
-                        TileManager.tileManager.Matches(this);
-                        TileManager.tileManager.Matches(otherTile);
-
-                        
-                        foreach(GameObject g in TileManager.tileManager.Matches(otherTile))
-                        {
-                            Debug.Log("(" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-                        }
                         
                         TileManager.tileManager.Match3(TileManager.tileManager.Matches(otherTile));
+                        TileManager.tileManager.Match3(TileManager.tileManager.Matches(this));
                     }
                     //if this tile is not adjacent, deselect all
                     else
@@ -134,5 +127,10 @@ public class CarTile : MonoBehaviour
     public bool isClicked()
     {
         return clicked;
+    }
+
+    public bool Equals(CarTile other)
+    {
+        return row == other.GetRow() && column == other.GetColumn() && num == other.GetNum();
     }
 }
