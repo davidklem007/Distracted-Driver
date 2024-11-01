@@ -71,6 +71,9 @@ public class TileManager : MonoBehaviour
                 tiles.Add(carTile);
             }
         }
+
+        //remove match 3s
+        StartCoroutine(ReplaceMatch3s());
     }
 
     Vector3 Offset(Vector3 vector)
@@ -444,25 +447,8 @@ public class TileManager : MonoBehaviour
         return matches3;
     }
 
-    //delete tile input and replace with new tile
-    IEnumerator ReplaceTile(GameObject tile, Tween tween = null)
-    {
-        //if tween given, wait for it to complete
-        if(tween != null && tween.IsActive())
-        {
-            yield return tween.WaitForCompletion();
-        }
-
-        Sequence replace = ReplaceSequence(tile);
-
-        replace.Play();
-
-        yield return replace.WaitForCompletion();
-
-    }
-
     //sequence for replacing a tile
-    Sequence ReplaceSequence(GameObject tile)
+    Sequence ReplaceSequence(GameObject tile, float delay = 0)
     {
         //get position and coordinates of tile
         Vector3 position = tile.transform.position;
@@ -474,7 +460,7 @@ public class TileManager : MonoBehaviour
 
         replace.Append(
             //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
-            DOVirtual.DelayedCall(0.3f, () =>
+            DOVirtual.DelayedCall(delay, () =>
             {
                 tiles.Remove(tile);
                 if (tile.GetComponent<CarTile>().isClicked())
@@ -487,7 +473,7 @@ public class TileManager : MonoBehaviour
 
         //spawn random new tile with same coordinates and position as old tile
         replace.Append(
-            DOVirtual.DelayedCall(0.3f, () =>
+            DOVirtual.DelayedCall(delay, () =>
             {
                 int carNum = Random.Range(0, tilePrefabs.Length);
                 GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
@@ -500,7 +486,7 @@ public class TileManager : MonoBehaviour
     }
     
 
-    IEnumerator ReplaceList(List<GameObject> list, Tween tween = null)
+    IEnumerator ReplaceList(List<GameObject> list, float delay = 0, Tween tween = null)
     {
         if (tween != null && tween.IsActive())
         {
@@ -515,7 +501,7 @@ public class TileManager : MonoBehaviour
             {
                 foreach (GameObject obj in list)
                 {
-                    replace.Insert(0, ReplaceSequence(obj));
+                    replace.Insert(0, ReplaceSequence(obj, delay));
                 }
                 replace.Play();
 
@@ -532,17 +518,14 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    public IEnumerator ReplaceListAndCheck(List<GameObject> list1, List<GameObject> list2 = null, Tween tween = null)
+    //replace all match 3s, at delay specified
+    public IEnumerator ReplaceMatch3s(float delay = 0, Tween tween = null)
     {
+        if (tween != null && tween.IsActive())
+        {
+            yield return tween.WaitForCompletion();
+        }
 
-        yield return StartCoroutine(ReplaceList(list1, tween));
-
-        yield return StartCoroutine(ReplaceList(list2, tween));
-
-    }
-
-    public IEnumerator RemoveMatch3s()
-    {
         //for every different tile type
         for (int i = 0; i < tilePrefabs.Length; i++)
         {
@@ -554,7 +537,8 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                yield return StartCoroutine(ReplaceList(match3));
+                yield return StartCoroutine(ReplaceList(match3, delay));
+                yield return StartCoroutine(ReplaceMatch3s(delay));
             }
         }
     }
