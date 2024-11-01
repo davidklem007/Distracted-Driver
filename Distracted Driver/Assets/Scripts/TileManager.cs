@@ -445,7 +445,7 @@ public class TileManager : MonoBehaviour
     }
 
     //delete tile input and replace with new tile
-    public IEnumerator ReplaceTile(GameObject tile, Tween tween = null)
+    IEnumerator ReplaceTile(GameObject tile, Tween tween = null)
     {
         //if tween given, wait for it to complete
         if(tween != null && tween.IsActive())
@@ -453,44 +453,73 @@ public class TileManager : MonoBehaviour
             yield return tween.WaitForCompletion();
         }
 
+        Sequence replace = ReplaceSequence(tile);
+
+        replace.Play();
+
+        yield return replace.WaitForCompletion();
+
+    }
+
+    //sequence for replacing a tile
+    Sequence ReplaceSequence(GameObject tile)
+    {
+        //get position and coordinates of tile
         Vector3 position = tile.transform.position;
         int row = tile.GetComponent<CarTile>().GetRow();
         int col = tile.GetComponent<CarTile>().GetColumn();
 
-        DOVirtual.DelayedCall(0.3f, () =>
-        {
-            tiles.Remove(tile);
-            if (tile.GetComponent<CarTile>().isClicked())
+        //create sequence
+        Sequence replace = DOTween.Sequence();
+
+        replace.Append(
+            //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
+            DOVirtual.DelayedCall(0.3f, () =>
             {
-                tile.GetComponent<CarTile>().Deselect();
-            }
-            Destroy(tile);
-        })
-            .OnComplete(() =>
+                tiles.Remove(tile);
+                if (tile.GetComponent<CarTile>().isClicked())
+                {
+                    tile.GetComponent<CarTile>().Deselect();
+                }
+                Destroy(tile);
+            })
+        );
+
+        //spawn random new tile with same coordinates and position as old tile
+        replace.Append(
+            DOVirtual.DelayedCall(0.3f, () =>
             {
                 int carNum = Random.Range(0, tilePrefabs.Length);
+                GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
+                carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
+                tiles.Add(carTile);
+            })
+        );
 
-                DOVirtual.DelayedCall(0.3f, () =>
-                {
-                    GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
-
-                    carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
-
-                    tiles.Add(carTile);
-                });                   
-            });
+        return replace;
     }
+    
 
-    public IEnumerator ReplaceList(List<GameObject> list, Tween tween = null)
+    IEnumerator ReplaceList(List<GameObject> list, Tween tween = null)
     {
+        if (tween != null && tween.IsActive())
+        {
+            yield return tween.WaitForCompletion();
+        }
+
+        Sequence replace = DOTween.Sequence();
+
         if (list != null)
         {
             if (list.Count > 0)
             {
                 foreach (GameObject obj in list)
                 {
-                    yield return StartCoroutine(ReplaceTile(obj, tween));
+                    replace.Insert(0, ReplaceSequence(obj));
                 }
+                replace.Play();
+
+                yield return replace.WaitForCompletion();
             }
             else
             {
@@ -510,10 +539,12 @@ public class TileManager : MonoBehaviour
 
         yield return StartCoroutine(ReplaceList(list2, tween));
 
-        yield return null;
+    }
 
+    public IEnumerator RemoveMatch3s()
+    {
         //for every different tile type
-        for(int i = 0; i < tilePrefabs.Length; i++)
+        for (int i = 0; i < tilePrefabs.Length; i++)
         {
             //get all tiles of the tile type i
             List<GameObject> matches = tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == i);
@@ -521,11 +552,12 @@ public class TileManager : MonoBehaviour
             List<GameObject> match3 = Match3(matches);
 
             //if match 3s found, repeat process again
-            if(match3.Count > 0)
+            if (match3.Count > 0)
             {
-                yield return StartCoroutine(ReplaceListAndCheck(match3, null, tween));
+                yield return StartCoroutine(ReplaceList(match3));
             }
         }
-
     }
+
+
 }
