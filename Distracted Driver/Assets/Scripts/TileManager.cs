@@ -200,7 +200,7 @@ public class TileManager : MonoBehaviour
     }
 
     //returns list of all connected, matching tiles of thisTile
-    public List<GameObject> Matches(CarTile thisTile, HashSet<GameObject> visited = null)
+    public List<GameObject> AdjacentMatches(CarTile thisTile, HashSet<GameObject> visited = null)
     {
         //sets up HashSet to keep track of all tiles checked
         if (visited == null)
@@ -225,7 +225,7 @@ public class TileManager : MonoBehaviour
 
         if(matches.Count <= 0)
         {
-            return new List<GameObject>();
+            return matches;
         }
         else
         {
@@ -233,7 +233,7 @@ public class TileManager : MonoBehaviour
             foreach (GameObject objCar in new List<GameObject>(matches))
             {
 
-                foreach (GameObject objOtherCar in Matches(objCar.GetComponent<CarTile>(), visited))
+                foreach (GameObject objOtherCar in AdjacentMatches(objCar.GetComponent<CarTile>(), visited))
                 {
                     if (!matches.Contains(objOtherCar))
                     {
@@ -448,7 +448,7 @@ public class TileManager : MonoBehaviour
     public IEnumerator ReplaceTile(GameObject tile, Tween tween = null)
     {
         //if tween given, wait for it to complete
-        if(tween != null)
+        if(tween != null && tween.IsActive())
         {
             yield return tween.WaitForCompletion();
         }
@@ -481,42 +481,50 @@ public class TileManager : MonoBehaviour
             });
     }
 
-    public IEnumerator ReplaceListAndCheck(List<GameObject> list1, List<GameObject> list2 = null, Tween tween = null)
+    public IEnumerator ReplaceList(List<GameObject> list, Tween tween = null)
     {
-        if (list1.Count > 0)
+        if (list != null)
         {
-            foreach (GameObject obj in list1)
+            if (list.Count > 0)
             {
-                yield return StartCoroutine(ReplaceTile(obj, tween));
+                foreach (GameObject obj in list)
+                {
+                    yield return StartCoroutine(ReplaceTile(obj, tween));
+                }
+            }
+            else
+            {
+                yield break;
             }
         }
         else
         {
-            if (list2 != null)
-            {
-                if (list2.Count > 0)
-                {
-                    foreach (GameObject obj in list2)
-                    {
-                        yield return StartCoroutine(ReplaceTile(obj, tween));
-                    }
-                }
-            }
+            yield break;
         }
+    }
+
+    public IEnumerator ReplaceListAndCheck(List<GameObject> list1, List<GameObject> list2 = null, Tween tween = null)
+    {
+
+        yield return StartCoroutine(ReplaceList(list1, tween));
+
+        yield return StartCoroutine(ReplaceList(list2, tween));
+
+        yield return null;
 
         //for every different tile type
         for(int i = 0; i < tilePrefabs.Length; i++)
         {
             //get all tiles of the tile type i
-            List<GameObject> matches = Matches((tiles.Find(tile => tile.GetComponent<CarTile>().GetNum() == i)).GetComponent<CarTile>());
+            List<GameObject> matches = tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == i);
             //get all match 3s of those tiles
             List<GameObject> match3 = Match3(matches);
 
+            //if match 3s found, repeat process again
             if(match3.Count > 0)
             {
-                yield return StartCoroutine(ReplaceListAndCheck(match3));
+                yield return StartCoroutine(ReplaceListAndCheck(match3, null, tween));
             }
-
         }
 
     }

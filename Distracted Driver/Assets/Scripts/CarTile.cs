@@ -55,8 +55,8 @@ public class CarTile : MonoBehaviour
                         Select();
                         Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile);
 
-                        List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.Matches(otherTile));
-                        List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.Matches(this));
+                        List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
+                        List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(this));
 
                         foreach (GameObject g in otherMatch3)
                         {
@@ -74,6 +74,10 @@ public class CarTile : MonoBehaviour
                         }
                         else
                         {
+                            StartCoroutine(TileManager.tileManager.ReplaceListAndCheck(thisMatch3, otherMatch3, swap1));
+
+
+                            /*
                             foreach (GameObject obj in thisMatch3)
                             {
                                 StartCoroutine(TileManager.tileManager.ReplaceTile(obj, swap1));
@@ -82,6 +86,7 @@ public class CarTile : MonoBehaviour
                             {
                                 StartCoroutine(TileManager.tileManager.ReplaceTile(obj, swap1));
                             }
+                            */
                         }
                     }
                     //if this tile is not adjacent, deselect all
