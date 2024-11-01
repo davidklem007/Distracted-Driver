@@ -486,13 +486,8 @@ public class TileManager : MonoBehaviour
     }
     
 
-    IEnumerator ReplaceList(List<GameObject> list, float delay = 0, Tween tween = null)
+    Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
-        if (tween != null && tween.IsActive())
-        {
-            yield return tween.WaitForCompletion();
-        }
-
         Sequence replace = DOTween.Sequence();
 
         if (list != null)
@@ -503,19 +498,10 @@ public class TileManager : MonoBehaviour
                 {
                     replace.Insert(0, ReplaceSequence(obj, delay));
                 }
-                replace.Play();
+            }
+        }
 
-                yield return replace.WaitForCompletion();
-            }
-            else
-            {
-                yield break;
-            }
-        }
-        else
-        {
-            yield break;
-        }
+        return replace;
     }
 
     //replace all match 3s, at delay specified
@@ -537,8 +523,10 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                yield return StartCoroutine(ReplaceList(match3, delay));
-                yield return StartCoroutine(ReplaceMatch3s(delay));
+                Sequence replaceList = ReplaceList(match3, delay);
+                replaceList.Play();
+                yield return replaceList.WaitForCompletion();
+                yield return StartCoroutine(ReplaceMatch3s(delay, tween));
             }
         }
     }
