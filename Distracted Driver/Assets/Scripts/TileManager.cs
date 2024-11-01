@@ -167,7 +167,7 @@ public class TileManager : MonoBehaviour
     }
 
     //Tiles swap positions, and deselected
-    public void SwapTiles(CarTile tile1, CarTile tile2)
+    public Tween SwapTiles(CarTile tile1, CarTile tile2, bool kill = true)
     {
         GameObject objTile1 = tile1.gameObject;
         GameObject objTile2 = tile2.gameObject;
@@ -178,7 +178,7 @@ public class TileManager : MonoBehaviour
 
         tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile1.GetNum());
         tile2.SetCar(row1, col1, tile2.GetNum());
-        objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
+        Tween move = objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
             .SetEase(Ease.OutCubic)
             .OnStart(() =>
             {
@@ -193,7 +193,10 @@ public class TileManager : MonoBehaviour
                 tile2.GetComponent<CarTile>().Deselect();
                 amtClicked = 0;
                 moving = false;
-            });
+            })
+            .SetAutoKill(kill);
+
+        return move;
     }
 
     //returns list of all connected, matching tiles of thisTile
@@ -442,8 +445,13 @@ public class TileManager : MonoBehaviour
     }
 
     //delete tile input and replace with new tile
-    public void ReplaceTile(GameObject tile)
+    public IEnumerator ReplaceTile(GameObject tile, Tween tween = null)
     {
+        if(tween != null)
+        {
+            yield return tween.WaitForCompletion();
+        }
+
         Vector3 position = tile.transform.position;
         int row = tile.GetComponent<CarTile>().GetRow();
         int col = tile.GetComponent<CarTile>().GetColumn();

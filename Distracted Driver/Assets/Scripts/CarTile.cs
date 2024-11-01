@@ -53,7 +53,7 @@ public class CarTile : MonoBehaviour
                     if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
                         Select();
-                        TileManager.tileManager.SwapTiles(this, otherTile);
+                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile);
 
                         List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.Matches(otherTile));
                         List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.Matches(this));
@@ -76,13 +76,12 @@ public class CarTile : MonoBehaviour
                         {
                             foreach (GameObject obj in thisMatch3)
                             {
-                                TileManager.tileManager.ReplaceTile(obj);
+                                StartCoroutine(TileManager.tileManager.ReplaceTile(obj, swap1));
                             }
                             foreach (GameObject obj in otherMatch3)
                             {
-                                TileManager.tileManager.ReplaceTile(obj);
+                                StartCoroutine(TileManager.tileManager.ReplaceTile(obj, swap1));
                             }
-                            
                         }
                     }
                     //if this tile is not adjacent, deselect all
