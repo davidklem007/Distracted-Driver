@@ -9,6 +9,7 @@ public class TileManager : MonoBehaviour
     //[rows][columns]
     public List<GameObject> tiles;
     public int amtClicked = 0;
+    public bool moving = false;
 
     [SerializeField] int rows;
     [SerializeField] int columns;
@@ -38,7 +39,7 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Debug.Log("Bart :)  " + amtClicked);
     }
 
     void GridAssign()
@@ -149,12 +150,20 @@ public class TileManager : MonoBehaviour
     }
 
     //Shake and deselect both tiles
-    public void DeselectAll(CarTile tile1, CarTile tile2)
+    public void DeselectAll(CarTile tile1 = null, CarTile tile2 = null)
     {
         tile1.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30)
-            .OnComplete(tile1.GetComponent<CarTile>().Deselect);
-        tile2.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30)
-            .OnComplete(tile2.GetComponent<CarTile>().Deselect);
+            .OnStart(() =>
+            {
+                moving = true;
+                tile2.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30);
+            })
+            .OnComplete(() =>
+            {
+                tile1.GetComponent<CarTile>().Deselect();
+                tile2.GetComponent<CarTile>().Deselect();
+                moving = false;
+            });
     }
 
     //Tiles swap positions, and deselected
@@ -168,14 +177,23 @@ public class TileManager : MonoBehaviour
         int col1 = tile1.GetColumn();
 
         tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile1.GetNum());
+        tile2.SetCar(row1, col1, tile2.GetNum());
         objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
             .SetEase(Ease.OutCubic)
-            .OnComplete(tile1.GetComponent<CarTile>().Deselect);
+            .OnStart(() =>
+            {
+                moving = true;
+                objTile2.transform.DOMove(pos1, 0.2f)
+                    .SetEase(Ease.OutCubic);
 
-        tile2.SetCar(row1, col1, tile2.GetNum());
-        objTile2.transform.DOMove(pos1, 0.2f)
-            .SetEase(Ease.OutCubic)
-            .OnComplete(tile2.GetComponent<CarTile>().Deselect);
+            })
+            .OnComplete(() =>
+            {
+                tile1.GetComponent<CarTile>().Deselect();
+                tile2.GetComponent<CarTile>().Deselect();
+                amtClicked = 0;
+                moving = false;
+            });
     }
 
     //returns list of all connected, matching tiles of thisTile
@@ -424,27 +442,34 @@ public class TileManager : MonoBehaviour
     }
 
     //delete tile input and replace with new tile
-    IEnumerator ReplaceTile(GameObject tile)
+    public void ReplaceTile(GameObject tile)
     {
         Vector3 position = tile.transform.position;
         int row = tile.GetComponent<CarTile>().GetRow();
         int col = tile.GetComponent<CarTile>().GetColumn();
 
-        yield return new WaitForSeconds(0.5f);
+        DOVirtual.DelayedCall(0.3f, () =>
+        {
+            tiles.Remove(tile);
+            if (tile.GetComponent<CarTile>().isClicked())
+            {
+                tile.GetComponent<CarTile>().Deselect();
+            }
+            Destroy(tile);
+        })
+            .OnComplete(() =>
+            {
+                int carNum = Random.Range(0, tilePrefabs.Length);
 
-        tiles.Remove(tile);
-        tile.GetComponent<CarTile>().Deselect();
-        Destroy(tile);
+                DOVirtual.DelayedCall(0.3f, () =>
+                {
+                    GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
 
-        yield return new WaitForSeconds(0.5f);
+                    carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
 
-        int carNum = Random.Range(0, tilePrefabs.Length);
-
-        GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
-
-        carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
-
-        tiles.Add(carTile);
+                    tiles.Add(carTile);
+                });                   
+            });
     }
 
 

@@ -12,16 +12,11 @@ public class CarTile : MonoBehaviour
     [SerializeField] int column;
     [SerializeField] int num;
     List<GameObject> tiles;
-    int amtClicked;
-    int index;
 
     // Start is called before the first frame update
     void Start()
     {
         tiles = TileManager.tileManager.tiles;
-
-        index = tiles.IndexOf(gameObject);
-        amtClicked = TileManager.tileManager.amtClicked;
 
         //Set size of tiles
         transform.localScale = new Vector3(scale, scale, scale);
@@ -30,39 +25,65 @@ public class CarTile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("Bart :)  " + amtClicked);
+        
     }
 
     private void OnMouseOver()
     {
         transform.localScale = new Vector3(scale * 1.15f, scale * 1.15f, scale * 1.15f);
 
-        if (Input.GetButtonDown("Select"))
+        if (Input.GetButtonDown("Select") && !TileManager.tileManager.moving)
         {
-            //get number of selected tiles
-            amtClicked = TileManager.tileManager.amtClicked;
             //if tile is selected and clicked on, deselect it
             if (clicked)
             {
                 Deselect();
             }
             //if tile isn't already selected and clicked on, and up to one other tile is selected
-            else if(!clicked && amtClicked <= 1)
+            else if(!clicked && TileManager.tileManager.amtClicked <= 1)
             {
                 //if tile clicked is second tile selected
-                if(amtClicked == 1)
+                if(TileManager.tileManager.amtClicked == 1)
                 {
                     //get other tile that's selected
                     CarTile otherTile = TileManager.tileManager.FindOther();
 
-                    //if tile is adjacent, get list of all matching tiles, then use that list to get match 3s
+                    //if tile is adjacent swap tiles
+                    //then get list of all matching tiles, then use that list to get match 3s
                     if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
                         Select();
                         TileManager.tileManager.SwapTiles(this, otherTile);
+
+                        List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.Matches(otherTile));
+                        List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.Matches(this));
+
+                        foreach (GameObject g in otherMatch3)
+                        {
+                            Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                        }
+
+                        foreach (GameObject g in thisMatch3)
+                        {
+                            Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                        }
                         
-                        TileManager.tileManager.Match3(TileManager.tileManager.Matches(otherTile));
-                        TileManager.tileManager.Match3(TileManager.tileManager.Matches(this));
+                        if(otherMatch3.Count == 0 && thisMatch3.Count == 0)
+                        {
+                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile));
+                        }
+                        else
+                        {
+                            foreach (GameObject obj in thisMatch3)
+                            {
+                                TileManager.tileManager.ReplaceTile(obj);
+                            }
+                            foreach (GameObject obj in otherMatch3)
+                            {
+                                TileManager.tileManager.ReplaceTile(obj);
+                            }
+                            
+                        }
                     }
                     //if this tile is not adjacent, deselect all
                     else
