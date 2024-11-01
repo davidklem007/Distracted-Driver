@@ -30,8 +30,14 @@ public class EnemySpawner : MonoBehaviour
     //1 or 2 random enemy prefabs spawn in 1 or 2 different lanes
     void SpawnEnemy()
     {
+        float speed1 = Random.Range(5.5f, 6.5f);
+        float speed2 = Random.Range(5.5f, 6.5f);
+
         enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
         enemyPrefab2 = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+
+        enemyPrefab.GetComponent<EnemyCar>().SetSpeed(speed1);
+        enemyPrefab2.GetComponent<EnemyCar>().SetSpeed(speed2);
 
         int lane = Random.Range(1, 7);
 

@@ -26,6 +26,11 @@ public class EnemyCar : MonoBehaviour
         }
     }
 
+    public void SetSpeed(float sped)
+    {
+        speed = sped;
+    }
+
     void Stop()
     {
         stop = true;
