@@ -39,6 +39,7 @@ public class TileManager : MonoBehaviour
         tiles = new List<GameObject>();
 
         GridAssign();
+        DOTween.Init();
     }
 
     // Update is called once per frame
@@ -509,16 +510,26 @@ public class TileManager : MonoBehaviour
         Sequence replace = DOTween.Sequence();
         replace.SetAutoKill(false);
 
+        Debug.Log("1");
         if (list != null)
         {
+            Debug.Log("2");
             if (list.Count > 0)
             {
+                Debug.Log("3");
                 foreach (GameObject obj in list)
                 {
+                    Debug.Log("4");
                     replace.Insert(0, ReplaceSequence(obj, delay));
                 }
             }
         }
+        else
+        {
+            return null;
+        }
+
+        Debug.Log("5");
 
         return replace;
     }
@@ -555,7 +566,7 @@ public class TileManager : MonoBehaviour
         Debug.Log("done " + layer);
     }
 
-    public IEnumerator ReplaceSpecific(List<GameObject> list1, List<GameObject> list2 = null, float delay = 0, Tween tween = null)
+    public IEnumerator ReplaceSpecific(List<GameObject> list1 = null, List<GameObject> list2 = null, float delay = 0, Tween tween = null)
     {
         if (tween != null && tween.IsActive())
         {
@@ -567,11 +578,17 @@ public class TileManager : MonoBehaviour
         if (list1 != null && list1.Count > 0)
         {
             Sequence replaceList1 = ReplaceList(list1, delay);
-            replaceList1.SetAutoKill(false);
-            replaceList1.Play();
-            yield return replaceList1.WaitForCompletion();
-            replaceList1.Kill();
+            Debug.Log("Tween created: " + (replaceList1 != null));
             Debug.Log("done -1");
+            //replaceList1.SetAutoKill(false);
+            Debug.Log("done -2");
+            //replaceList1.Play();
+            Debug.Log("done -3");
+            //yield return replaceList1.WaitForCompletion();
+            //yield return new WaitForSeconds(.5f);
+            Debug.Log("done -4");
+            replaceList1.Kill();
+            Debug.Log("done -5");
 
             if (list2 != null && list2.Count > 0)
             {
@@ -580,7 +597,7 @@ public class TileManager : MonoBehaviour
                 replaceList2.Play();
                 yield return replaceList2.WaitForCompletion();
                 replaceList2.Kill();
-                Debug.Log("done -2");
+                Debug.Log("done -6");
             }
         }
         else
@@ -592,7 +609,7 @@ public class TileManager : MonoBehaviour
                 replaceList2.Play();
                 yield return replaceList2.WaitForCompletion();
                 replaceList2.Kill();
-                Debug.Log("done -3");
+                Debug.Log("done -7");
             }
         }
 
