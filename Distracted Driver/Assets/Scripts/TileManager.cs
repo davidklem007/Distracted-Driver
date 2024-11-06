@@ -10,6 +10,9 @@ public class TileManager : MonoBehaviour
     public List<GameObject> tiles;
     public int amtClicked = 0;
     public bool moving = false;
+    public bool stop = false;
+
+    int match3sCount = 0;
 
     [SerializeField] int rows;
     [SerializeField] int columns;
@@ -29,6 +32,8 @@ public class TileManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        EventManager.GameOver.AddListener(Stop);
+
         tilePrefabs = Resources.LoadAll<GameObject>("Car Tiles");
 
         tiles = new List<GameObject>();
@@ -73,15 +78,13 @@ public class TileManager : MonoBehaviour
         }
 
         //remove match 3s
-        StartCoroutine(ReplaceMatch3s());
+        StartCoroutine(ReplaceMatch3sAtStart());
     }
 
     Vector3 Offset(Vector3 vector)
     {
         return new Vector3(vector.x + xOffset, vector.y - yOffset, vector.x);
     }
-
-    
 
     //find clicked car tile
     public CarTile FindOther()
@@ -113,6 +116,13 @@ public class TileManager : MonoBehaviour
             return false;
         }
 
+    }
+
+    public int GetMatchesCount()
+    {
+        int temp = match3sCount;
+        match3sCount = 0;
+        return temp;
     }
 
     //Returns list of Cartile gameobjects next to given cartile
@@ -248,11 +258,12 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    //returns list of all tiles that are a set of 3 or more in the list given
     public List<GameObject> Match3(List<GameObject> matches)
     {
         List<GameObject> matches3 = new List<GameObject>();
 
-        //counts tiles is a set of matched tiles
+        //counts tiles for a set of matched tiles
         int matched = 0;
 
         //Sort row by row, with columns in order
@@ -308,6 +319,7 @@ public class TileManager : MonoBehaviour
                     //then reset the matched count because we will check a new row next
                     if (matched >= 3)
                     {
+                        match3sCount++;
                         for (int x = 0; x < matched; x++)
                         {
                             if (!matches3.Contains(matches[i - x]))
@@ -326,6 +338,7 @@ public class TileManager : MonoBehaviour
                 //and reset matched count to zero because we will start in a new row next
                 if (matched >= 3)
                 {
+                    match3sCount++;
                     for (int x = 0; x < matched; x++)
                     {
                         if (!matches3.Contains(matches[i - x]))
@@ -341,6 +354,7 @@ public class TileManager : MonoBehaviour
         //after going through all the tiles, if there was a match3 at the end of the row this checks that and adds the matching tiles
         if (matched >= 3)
         {
+            match3sCount++;
             for (int x = 0; x < matched; x++)
             {
                 if (!matches3.Contains(matches[matches.Count - 1 - x]))
@@ -397,6 +411,7 @@ public class TileManager : MonoBehaviour
                 {
                     if (matched >= 3)
                     {
+                        match3sCount++;
                         for (int x = 0; x < matched; x++)
                         {
                             if (!matches3.Contains(matches[i - x]))
@@ -412,6 +427,7 @@ public class TileManager : MonoBehaviour
             {
                 if (matched >= 3)
                 {
+                    match3sCount++;
                     for (int x = 0; x < matched; x++)
                     {
                         if (!matches3.Contains(matches[i - x]))
@@ -428,6 +444,7 @@ public class TileManager : MonoBehaviour
         {
             for (int x = 0; x < matched; x++)
             {
+                match3sCount++;
                 if (!matches3.Contains(matches[matches.Count - 1 - x]))
                 {
                     matches3.Add(matches[matches.Count - 1 - x]);
@@ -486,6 +503,7 @@ public class TileManager : MonoBehaviour
     }
     
 
+    //sequence to replace a list of cartiles, each deleted at delay time given
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
         Sequence replace = DOTween.Sequence();
@@ -531,5 +549,15 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    IEnumerator ReplaceMatch3sAtStart()
+    {
+        yield return StartCoroutine(ReplaceMatch3s());
+        GetMatchesCount();
+    }
+
+    void Stop()
+    {
+        stop = true;
+    }
 
 }

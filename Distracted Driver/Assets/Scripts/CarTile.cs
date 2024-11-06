@@ -5,19 +5,15 @@ using DG.Tweening;
 
 public class CarTile : MonoBehaviour
 {
-    TileManager tileManager;
     bool clicked = false;
     [SerializeField] float scale;
     [SerializeField] int row;
     [SerializeField] int column;
     [SerializeField] int num;
-    List<GameObject> tiles;
 
     // Start is called before the first frame update
     void Start()
     {
-        tiles = TileManager.tileManager.tiles;
-
         //Set size of tiles
         transform.localScale = new Vector3(scale, scale, scale);
     }
@@ -25,14 +21,14 @@ public class CarTile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnMouseOver()
     {
         transform.localScale = new Vector3(scale * 1.15f, scale * 1.15f, scale * 1.15f);
 
-        if (Input.GetButtonDown("Select") && !TileManager.tileManager.moving)
+        if (Input.GetButtonDown("Select") && !TileManager.tileManager.moving && !TileManager.tileManager.stop)
         {
             //if tile is selected and clicked on, deselect it
             if (clicked)
@@ -77,7 +73,7 @@ public class CarTile : MonoBehaviour
                         }
                         else
                         {
-                            StartCoroutine(TileManager.tileManager.ReplaceMatch3s(0.3f, swap1));
+                            StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
                         }
                     }
                     //if this tile is not adjacent, deselect all
@@ -148,5 +144,16 @@ public class CarTile : MonoBehaviour
     public bool Equals(CarTile other)
     {
         return row == other.GetRow() && column == other.GetColumn() && num == other.GetNum();
+    }
+
+    IEnumerator ReplaceMatch3sAndDecreaseSpeed(float delay, Tween tween)
+    {
+        yield return StartCoroutine(TileManager.tileManager.ReplaceMatch3s(delay, tween));
+
+        for(int i = 0; i < TileManager.tileManager.GetMatchesCount(); i++)
+        {
+            GameManager.gameManager.DecreaseSpeed();
+            Debug.Log("Sped decreaz");
+        }
     }
 }
