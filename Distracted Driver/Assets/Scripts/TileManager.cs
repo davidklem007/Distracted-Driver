@@ -39,8 +39,7 @@ public class TileManager : MonoBehaviour
         tiles = new List<GameObject>();
 
         GridAssign();
-
-        DOTween.defaultAutoPlay = AutoPlay.AutoPlayTweeners;
+        DOTween.Init();
     }
 
     // Update is called once per frame
@@ -475,7 +474,7 @@ public class TileManager : MonoBehaviour
         int col = tile.GetComponent<CarTile>().GetColumn();
 
         //create sequence
-        Sequence replace = DOTween.Sequence();
+        Sequence replace = DOTween.Sequence().SetAutoKill(false);
 
         replace.Append(
             //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
@@ -509,6 +508,7 @@ public class TileManager : MonoBehaviour
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
         Sequence replace = DOTween.Sequence();
+        replace.SetAutoKill(false);
 
         Debug.Log("1");
         if (list != null)
@@ -577,17 +577,17 @@ public class TileManager : MonoBehaviour
 
         if (list1 != null && list1.Count > 0)
         {
-            Sequence replaceList1 = ReplaceList(list1, delay).SetAutoKill(false);
+            Sequence replaceList1 = ReplaceList(list1, delay);
             Debug.Log("Tween created: " + (replaceList1 != null));
-            //Debug.Log("Tween created: " + (replaceList1 != null));
             Debug.Log("done -1");
+            //replaceList1.SetAutoKill(false);
             Debug.Log("done -2");
-            replaceList1.Play();
+            //replaceList1.Play();
             Debug.Log("done -3");
-            yield return replaceList1.WaitForCompletion();
+            //yield return replaceList1.WaitForCompletion();
             //yield return new WaitForSeconds(.5f);
             Debug.Log("done -4");
-            //replaceList1.Kill();
+            replaceList1.Kill();
             Debug.Log("done -5");
 
             if (list2 != null && list2.Count > 0)
@@ -614,7 +614,7 @@ public class TileManager : MonoBehaviour
         }
 
         //yield return StartCoroutine(ReplaceMatch3s(delay, tween));
-        Debug.Log("done -8");
+        Debug.Log("done -4");
 
     }
 
