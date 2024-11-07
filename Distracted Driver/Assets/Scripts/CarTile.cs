@@ -10,7 +10,6 @@ public class CarTile : MonoBehaviour
     [SerializeField] int row;
     [SerializeField] int column;
     [SerializeField] int num;
-    bool replacing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -37,49 +36,44 @@ public class CarTile : MonoBehaviour
                 Deselect();
             }
             //if tile isn't already selected and clicked on, and up to one other tile is selected
-            else if(!clicked && TileManager.tileManager.amtClicked <= 1 && !replacing)
+            else if(!clicked && TileManager.tileManager.amtClicked <= 1)
             {
                 //if tile clicked is second tile selected
                 if(TileManager.tileManager.amtClicked == 1)
                 {
                     //get other tile that's selected
                     CarTile otherTile = TileManager.tileManager.FindOther();
-                    Debug.Log("other (" + otherTile.GetComponent<CarTile>().GetRow() + ", " + otherTile.GetComponent<CarTile>().GetColumn() + ")");
-                    //Debug.Break();
-
-                    Debug.Log("this (" + GetRow() + ", " + GetColumn() + ")");
-                    Debug.Break();
 
                     //if tile is adjacent swap tiles
                     //then get list of all matching tiles, then use that list to get match 3s
                     if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
                         Select();
-                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile, false);
+                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile);
 
                         List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
                         List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(this));
 
-                        //List<GameObject> matchesOther = TileManager.tileManager.tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == otherTile.GetNum());
-                        //List<GameObject> otherMatch3 = TileManager.tileManager.Match3(matchesOther);
+                        /*
+                        foreach (GameObject g in otherMatch3)
+                        {
+                            Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                        }
 
-                        //List<GameObject> matchesThis = TileManager.tileManager.tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == num);
-                        //List<GameObject> thisMatch3 = TileManager.tileManager.Match3(matchesThis);
+                        foreach (GameObject g in thisMatch3)
+                        {
+                            Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                        }
+
+                        */
                         
-
-                        Debug.Log("count this: " + thisMatch3.Count);
-                        Debug.Log("count other: " + otherMatch3.Count);
-
-                        int match3Count = TileManager.tileManager.GetMatchesCount();
-
-
-                        if (match3Count == 0)
+                        if(otherMatch3.Count == 0 && thisMatch3.Count == 0)
                         {
                             DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile));
                         }
                         else
                         {
-                            StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(otherMatch3, thisMatch3, 0.3f, swap1, match3Count));
+                            StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
                         }
                     }
                     //if this tile is not adjacent, deselect all
@@ -87,80 +81,6 @@ public class CarTile : MonoBehaviour
                     {
                         Select();
                         DOVirtual.DelayedCall(0.3f, ()=> TileManager.tileManager.DeselectAll(this, otherTile));
-                    }
-
-                }
-                //if no other tiles clicked, select tile
-                else
-                {
-                    Select();
-                }
-            }
-        }
-    }
-
-    IEnumerator Everything()
-    {
-        if (Input.GetButtonDown("Select") && !TileManager.tileManager.moving && !TileManager.tileManager.stop)
-        {
-            //if tile is selected and clicked on, deselect it
-            if (clicked)
-            {
-                Deselect();
-            }
-            //if tile isn't already selected and clicked on, and up to one other tile is selected
-            else if (!clicked && TileManager.tileManager.amtClicked <= 1 && !replacing)
-            {
-                //if tile clicked is second tile selected
-                if (TileManager.tileManager.amtClicked == 1)
-                {
-                    //get other tile that's selected
-                    CarTile otherTile = TileManager.tileManager.FindOther();
-                    Debug.Log("other (" + otherTile.GetComponent<CarTile>().GetRow() + ", " + otherTile.GetComponent<CarTile>().GetColumn() + ")");
-                    //Debug.Break();
-
-                    Debug.Log("this (" + GetRow() + ", " + GetColumn() + ")");
-                    Debug.Break();
-
-                    //if tile is adjacent swap tiles
-                    //then get list of all matching tiles, then use that list to get match 3s
-                    if (TileManager.tileManager.IsAdjacent(this, otherTile))
-                    {
-                        Select();
-                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile, false);
-
-                        yield return swap1
-
-                        List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
-                        List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(this));
-
-                        //List<GameObject> matchesOther = TileManager.tileManager.tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == otherTile.GetNum());
-                        //List<GameObject> otherMatch3 = TileManager.tileManager.Match3(matchesOther);
-
-                        //List<GameObject> matchesThis = TileManager.tileManager.tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == num);
-                        //List<GameObject> thisMatch3 = TileManager.tileManager.Match3(matchesThis);
-
-
-                        Debug.Log("count this: " + thisMatch3.Count);
-                        Debug.Log("count other: " + otherMatch3.Count);
-
-                        int match3Count = TileManager.tileManager.GetMatchesCount();
-
-
-                        if (match3Count == 0)
-                        {
-                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile));
-                        }
-                        else
-                        {
-                            StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(otherMatch3, thisMatch3, 0.3f, swap1, match3Count));
-                        }
-                    }
-                    //if this tile is not adjacent, deselect all
-                    else
-                    {
-                        Select();
-                        DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.DeselectAll(this, otherTile));
                     }
 
                 }
@@ -226,20 +146,14 @@ public class CarTile : MonoBehaviour
         return row == other.GetRow() && column == other.GetColumn() && num == other.GetNum();
     }
 
-    IEnumerator ReplaceMatch3sAndDecreaseSpeed(List<GameObject> list1, List<GameObject> list2, float delay, Tween tween, int extra)
+    IEnumerator ReplaceMatch3sAndDecreaseSpeed(float delay, Tween tween)
     {
-        replacing = true;
+        yield return StartCoroutine(TileManager.tileManager.ReplaceMatch3s(delay, tween));
 
-        yield return StartCoroutine(TileManager.tileManager.ReplaceSpecific(list1, list2, delay, tween));
-
-        //Debug.Log("done");
-
-        for(int i = 0; i < TileManager.tileManager.GetMatchesCount() + extra; i++)
+        for(int i = 0; i < TileManager.tileManager.GetMatchesCount(); i++)
         {
             GameManager.gameManager.DecreaseSpeed();
-            //Debug.Log("Sped decreaz");
+            Debug.Log("Sped decreaz");
         }
-
-        replacing = false;
     }
 }

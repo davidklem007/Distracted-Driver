@@ -473,7 +473,7 @@ public class TileManager : MonoBehaviour
         int col = tile.GetComponent<CarTile>().GetColumn();
 
         //create sequence
-        Sequence replace = DOTween.Sequence().SetAutoKill(false);
+        Sequence replace = DOTween.Sequence();
 
         replace.Append(
             //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
@@ -507,7 +507,6 @@ public class TileManager : MonoBehaviour
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
         Sequence replace = DOTween.Sequence();
-        replace.SetAutoKill(false);
 
         if (list != null)
         {
@@ -524,12 +523,11 @@ public class TileManager : MonoBehaviour
     }
 
     //replace all match 3s, at delay specified
-    IEnumerator ReplaceMatch3s(float delay = 0, Tween tween = null, int layer = 0)
+    public IEnumerator ReplaceMatch3s(float delay = 0, Tween tween = null)
     {
         if (tween != null && tween.IsActive())
         {
             yield return tween.WaitForCompletion();
-            tween.Kill();
         }
 
         //for every different tile type
@@ -544,61 +542,11 @@ public class TileManager : MonoBehaviour
             if (match3.Count > 0)
             {
                 Sequence replaceList = ReplaceList(match3, delay);
-                replaceList.SetAutoKill(false);
                 replaceList.Play();
                 yield return replaceList.WaitForCompletion();
-                replaceList.Kill();
-                yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
-                Debug.Log("multiple " + layer);
+                yield return StartCoroutine(ReplaceMatch3s(delay, tween));
             }
         }
-        Debug.Log("done " + layer);
-    }
-
-    public IEnumerator ReplaceSpecific(List<GameObject> list1, List<GameObject> list2 = null, float delay = 0, Tween tween = null)
-    {
-        if (tween != null && tween.IsActive())
-        {
-            yield return tween.WaitForCompletion();
-            tween.Kill();
-        }
-
-
-        if (list1 != null && list1.Count > 0)
-        {
-            Sequence replaceList1 = ReplaceList(list1, delay);
-            replaceList1.SetAutoKill(false);
-            replaceList1.Play();
-            yield return replaceList1.WaitForCompletion();
-            replaceList1.Kill();
-            Debug.Log("done -1");
-
-            if (list2 != null && list2.Count > 0)
-            {
-                Sequence replaceList2 = ReplaceList(list2, delay);
-                replaceList2.SetAutoKill(false);
-                replaceList2.Play();
-                yield return replaceList2.WaitForCompletion();
-                replaceList2.Kill();
-                Debug.Log("done -2");
-            }
-        }
-        else
-        {
-            if (list2 != null && list2.Count > 0)
-            {
-                Sequence replaceList2 = ReplaceList(list2, delay);
-                replaceList2.SetAutoKill(false);
-                replaceList2.Play();
-                yield return replaceList2.WaitForCompletion();
-                replaceList2.Kill();
-                Debug.Log("done -3");
-            }
-        }
-
-        //yield return StartCoroutine(ReplaceMatch3s(delay, tween));
-        Debug.Log("done -4");
-
     }
 
     IEnumerator ReplaceMatch3sAtStart()
