@@ -38,6 +38,9 @@ public class CarTile : MonoBehaviour
             //if tile isn't already selected and clicked on, and up to one other tile is selected
             else if(!clicked && TileManager.tileManager.amtClicked <= 1)
             {
+
+                StartCoroutine(TileManager.tileManager.ManageClicks(this));
+                /*
                 //if tile clicked is second tile selected
                 if(TileManager.tileManager.amtClicked == 1)
                 {
@@ -65,7 +68,7 @@ public class CarTile : MonoBehaviour
                             Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
                         }
 
-                        */
+                        
                         
                         if(otherMatch3.Count == 0 && thisMatch3.Count == 0)
                         {
@@ -89,6 +92,7 @@ public class CarTile : MonoBehaviour
                 {
                     Select();
                 }
+                */
             }
         }
     }
@@ -122,7 +126,7 @@ public class CarTile : MonoBehaviour
         return num;
     }
 
-    void Select()
+    public void Select()
     {
         clicked = true;
         TileManager.tileManager.amtClicked++;

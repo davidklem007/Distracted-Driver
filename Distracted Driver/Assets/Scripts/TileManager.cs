@@ -163,13 +163,12 @@ public class TileManager : MonoBehaviour
     }
 
     //Shake and deselect both tiles
-    public void DeselectAll(CarTile tile1 = null, CarTile tile2 = null)
+    public Sequence DeselectAll(CarTile tile1 = null, CarTile tile2 = null)
     {
-        tile1.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30)
+        Sequence deselect = DOTween.Sequence()
             .OnStart(() =>
             {
                 moving = true;
-                tile2.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30);
             })
             .OnComplete(() =>
             {
@@ -177,6 +176,12 @@ public class TileManager : MonoBehaviour
                 tile2.GetComponent<CarTile>().Deselect();
                 moving = false;
             });
+
+        deselect.Insert(0, tile1.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30));
+
+        deselect.Insert(0, tile2.transform.DOShakePosition(0.3f, new Vector3(.07f, 0, 0), 30));
+
+        return deselect;
     }
 
     //Tiles swap positions, and deselected
@@ -203,7 +208,6 @@ public class TileManager : MonoBehaviour
                 tile2.GetComponent<CarTile>().Deselect();
                 amtClicked = 0;
                 moving = false;
-                Debug.Log("CAn u find me");
             })
             .SetAutoKill(kill);
 
@@ -562,6 +566,7 @@ public class TileManager : MonoBehaviour
                 Debug.Log("manager 2 layer " + layer);
                 yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
                 Debug.Log("manager 3 layer " + layer);
+                
             }
         }
     }
@@ -570,6 +575,85 @@ public class TileManager : MonoBehaviour
     {
         yield return StartCoroutine(ReplaceMatch3s());
         GetMatchesCount();
+    }
+
+    public IEnumerator ManageClicks(CarTile carTile)
+    {
+        //if tile clicked is second tile selected
+        if (amtClicked == 1)
+        {
+            carTile.Select();
+
+            //get tiles selected
+            List<GameObject> selected = tiles.FindAll(tile => tile.GetComponent<CarTile>().isClicked());
+
+            CarTile carTile1 = selected[0].GetComponent<CarTile>();
+            CarTile carTile2 = selected[1].GetComponent<CarTile>();
+
+            //if tile is adjacent swap tiles
+            //then get list of all matching tiles, then use that list to get match 3s
+            if (IsAdjacent(carTile1, carTile2))
+            {
+
+                Sequence swap1 = DOTween.Sequence().SetAutoKill(false);
+
+                yield return swap1.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
+
+                swap1.Kill();
+
+                List<GameObject> otherMatch3 = Match3(AdjacentMatches(carTile1));
+                List<GameObject> thisMatch3 = Match3(AdjacentMatches(carTile2));
+
+                /*
+                foreach (GameObject g in otherMatch3)
+                {
+                    Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                }
+
+                foreach (GameObject g in thisMatch3)
+                {
+                    Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                }
+
+                */
+
+                if (otherMatch3.Count == 0 && thisMatch3.Count == 0)
+                {
+                    yield return new WaitForSeconds(0.15f);
+
+                    Sequence swap2 = DOTween.Sequence().SetAutoKill(false);
+
+                    yield return swap2.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
+
+                    swap2.Kill();
+
+                }
+                else
+                {
+                    yield return StartCoroutine(ReplaceMatch3s(0.3f));
+                    
+                    for (int i = 0; i < GetMatchesCount(); i++)
+                    {
+                        GameManager.gameManager.DecreaseSpeed();
+                        Debug.Log("Sped decreaz");
+                    }
+                    
+
+                    Debug.Log("yeah yeah");
+                }
+            }
+            //if this tile is not adjacent, deselect all
+            else
+            {
+                yield return new WaitForSeconds(0.3f);
+
+                yield return DeselectAll(carTile1, carTile2).WaitForCompletion();
+            }
+        }
+        else
+        {
+            carTile.Select();
+        }
     }
 
     void Stop()
