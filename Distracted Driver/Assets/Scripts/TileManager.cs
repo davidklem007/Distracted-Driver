@@ -34,6 +34,8 @@ public class TileManager : MonoBehaviour
     {
         //EventManager.GameOver.AddListener(Stop);
 
+        DOTween.defaultAutoPlay = AutoPlay.AutoPlayTweeners;
+
         tilePrefabs = Resources.LoadAll<GameObject>("Car Tiles");
 
         tiles = new List<GameObject>();
@@ -197,7 +199,7 @@ public class TileManager : MonoBehaviour
         tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile1.GetNum());
         tile2.SetCar(row1, col1, tile2.GetNum());
 
-        Sequence move = DOTween.Sequence().Pause()
+        Sequence move = DOTween.Sequence()
             .OnStart(() =>
             {
                 moving = true;
@@ -481,31 +483,31 @@ public class TileManager : MonoBehaviour
         int col = tile.GetComponent<CarTile>().GetColumn();
 
         //create sequence
-        Sequence replace = DOTween.Sequence().Pause();
+        Sequence replace = DOTween.Sequence();
 
-        replace.Append(
+        replace.AppendInterval(delay);
+
+        replace.AppendCallback(() =>
+        {
             //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
-            DOVirtual.DelayedCall(delay, () =>
+            tiles.Remove(tile);
+            if (tile.GetComponent<CarTile>().isClicked())
             {
-                tiles.Remove(tile);
-                if (tile.GetComponent<CarTile>().isClicked())
-                {
-                    tile.GetComponent<CarTile>().Deselect();
-                }
-                Destroy(tile);
-            })
-        );
+                tile.GetComponent<CarTile>().Deselect();
+            }
+            Destroy(tile);
+        });
+
+        replace.AppendInterval(delay);
 
         //spawn random new tile with same coordinates and position as old tile
-        replace.Append(
-            DOVirtual.DelayedCall(delay, () =>
+        replace.AppendCallback(() =>
             {
                 int carNum = Random.Range(0, tilePrefabs.Length);
                 GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
                 carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
                 tiles.Add(carTile);
-            })
-        );
+            });
 
         return replace;
     }
@@ -514,7 +516,7 @@ public class TileManager : MonoBehaviour
     //sequence to replace a list of cartiles, each deleted at delay time given
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
-        Sequence replace = DOTween.Sequence().Pause();
+        Sequence replace = DOTween.Sequence();
 
         if (list != null)
         {
@@ -525,7 +527,7 @@ public class TileManager : MonoBehaviour
                 foreach (GameObject obj in list)
                 {
                     Debug.Log("manager C");
-                    replace.Insert(0, ReplaceSequence(obj, delay).Pause());
+                    replace.Join(ReplaceSequence(obj, delay));
                     Debug.Log("manager D");
                 }
                 Debug.Log("manager E");
@@ -543,7 +545,9 @@ public class TileManager : MonoBehaviour
             yield return tween.WaitForCompletion();
         }
 
-        Sequence replaceList = DOTween.Sequence().Pause();
+        Sequence replaceList = DOTween.Sequence().SetAutoKill(false).Pause();
+
+        int matchCount = 0;
 
         //for every different tile type
         for (int i = 0; i < tilePrefabs.Length; i++)
@@ -556,18 +560,44 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                replaceList.Append(ReplaceList(match3, delay));
+                matchCount++;
+
+                Debug.Log("manager 0 layer " + layer);
+
+                yield return ReplaceList(match3, delay).Play().WaitForCompletion();
+
+                //Debug.Break();
                 
                 Debug.Log("manager 1 layer " + layer);
             }
         }
 
-        yield return replaceList.Play().WaitForCompletion();
+        //Debug.Log("Playing: " + replaceList.IsPlaying());
+
+        replaceList.OnComplete(() =>
+        {
+            Debug.Log("Done!");
+        });
+
+        //replaceList.SetAutoKill(false);
+        //yield return replaceList.Play().WaitForCompletion();
+
+        replaceList.Kill();
 
         Debug.Log("manager 2 layer " + layer);
 
-        yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
-        Debug.Log("manager 3 layer " + layer);
+        if(matchCount > 0)
+        {
+            yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
+            Debug.Log("manager 3 layer " + layer);
+        }
+        else
+        {
+            Debug.Log("manager 4 layer " + layer);
+            yield break;
+        }
+
+        Debug.Log("manager 5 layer " + layer);
     }
 
     IEnumerator ReplaceMatch3sAtStart()
@@ -596,7 +626,7 @@ public class TileManager : MonoBehaviour
 
                 Sequence swap1 = DOTween.Sequence().SetAutoKill(false);
 
-                yield return swap1.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
+                yield return swap1.Append(SwapTiles(carTile1, carTile2)).Play().WaitForCompletion();
 
                 swap1.Kill();
 
@@ -622,20 +652,18 @@ public class TileManager : MonoBehaviour
 
                     Sequence swap2 = DOTween.Sequence().SetAutoKill(false);
 
-                    yield return swap2.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
+                    yield return swap2.Append(SwapTiles(carTile1, carTile2)).Play().WaitForCompletion();
 
                     swap2.Kill();
 
                 }
                 else
                 {
-                    yield return StartCoroutine(ReplaceMatch3s(0.3f));
-                    
-                    for (int i = 0; i < GetMatchesCount(); i++)
-                    {
-                        GameManager.gameManager.DecreaseSpeed();
-                        Debug.Log("Sped decreaz");
-                    }
+                    yield return ReplaceMatch3s(0.3f);
+
+                    Debug.Log("Sped decreaz");
+
+                    //GameManager.gameManager.DecreaseSpeed();
                     
 
                     Debug.Log("yeah yeah");
@@ -646,7 +674,7 @@ public class TileManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.3f);
 
-                yield return DeselectAll(carTile1, carTile2).WaitForCompletion();
+                yield return DeselectAll(carTile1, carTile2).Play().WaitForCompletion();
             }
         }
         else
