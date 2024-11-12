@@ -48,9 +48,8 @@ public class CarTile : MonoBehaviour
                     //then get list of all matching tiles, then use that list to get match 3s
                     if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
-                        /*
                         Select();
-                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile, false).Play();
+                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile);
 
                         List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
                         List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(this));
@@ -66,20 +65,16 @@ public class CarTile : MonoBehaviour
                             Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
                         }
 
-                        
+                        */
                         
                         if(otherMatch3.Count == 0 && thisMatch3.Count == 0)
                         {
-                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile)).Play();
+                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile));
                         }
                         else
                         {
-                            //StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
-                            StartCoroutine(ReplaceOne(otherMatch3, 0.3f, swap1));
+                            StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
                         }
-                        */
-                        StartCoroutine(ReplaceOne(otherTile));
-
                     }
                     //if this tile is not adjacent, deselect all
                     else
@@ -162,50 +157,5 @@ public class CarTile : MonoBehaviour
             Debug.Log("Sped decreaz (" + row + ", " + column + ")");
         }
         Debug.Log("3 (" + row + ", " + column + ")");
-    }
-
-
-    IEnumerator ReplaceOne(CarTile otherTile)
-    {
-        Select();
-        CarTile clone = (CarTile) MemberwiseClone();
-        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile, false);
-
-        yield return swap1.Play().WaitForCompletion();
-
-        Debug.Log("Whiveh one");
-        swap1.Kill();
-
-        List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
-        List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == num));
-
-        /*
-        foreach (GameObject g in otherMatch3)
-        {
-            Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-        }
-
-        foreach (GameObject g in thisMatch3)
-        {
-            Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-        }
-
-        */
-
-        if (otherMatch3.Count == 0 && thisMatch3.Count == 0)
-        {
-            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile)).Play();
-        }
-        else
-        {
-            //StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
-            Sequence fart = DOTween.Sequence();
-
-            yield return fart.Append(TileManager.tileManager.ReplaceList(thisMatch3, 0.3f)).WaitForCompletion();
-            Debug.Log("AAAAAAAAAAAAA");
-        }
-
-        Debug.Log("1 (" + row + ", " + column + ")");
-
     }
 }

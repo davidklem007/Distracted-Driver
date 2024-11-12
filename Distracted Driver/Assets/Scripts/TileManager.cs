@@ -180,7 +180,7 @@ public class TileManager : MonoBehaviour
     }
 
     //Tiles swap positions, and deselected
-    public Sequence SwapTiles(CarTile tile1, CarTile tile2, bool kill = true)
+    public Tween SwapTiles(CarTile tile1, CarTile tile2, bool kill = true)
     {
         GameObject objTile1 = tile1.gameObject;
         GameObject objTile2 = tile2.gameObject;
@@ -191,11 +191,14 @@ public class TileManager : MonoBehaviour
 
         tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile1.GetNum());
         tile2.SetCar(row1, col1, tile2.GetNum());
-
-        Sequence move = DOTween.Sequence().Pause()
+        Tween move = objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
+            .SetEase(Ease.OutCubic)
             .OnStart(() =>
             {
                 moving = true;
+                objTile2.transform.DOMove(pos1, 0.2f)
+                    .SetEase(Ease.OutCubic);
+
             })
             .OnComplete(() =>
             {
@@ -203,15 +206,8 @@ public class TileManager : MonoBehaviour
                 tile2.GetComponent<CarTile>().Deselect();
                 amtClicked = 0;
                 moving = false;
-                Debug.Log("CAn u find me");
             })
             .SetAutoKill(kill);
-
-        move.Insert(0, objTile1.transform.DOMove(objTile2.transform.position, 0.2f).SetEase(Ease.OutCubic));
-
-        move.Insert(0, objTile2.transform.DOMove(pos1, 0.2f).SetEase(Ease.OutCubic));
-
-        
 
         return move;
     }
@@ -469,7 +465,7 @@ public class TileManager : MonoBehaviour
     }
 
     //sequence for replacing a tile
-    public Sequence ReplaceSequence(GameObject tile, float delay = 0)
+    Sequence ReplaceSequence(GameObject tile, float delay = 0)
     {
         //get position and coordinates of tile
         Vector3 position = tile.transform.position;
@@ -477,7 +473,7 @@ public class TileManager : MonoBehaviour
         int col = tile.GetComponent<CarTile>().GetColumn();
 
         //create sequence
-        Sequence replace = DOTween.Sequence().Pause().SetAutoKill(false);
+        Sequence replace = DOTween.Sequence().Pause();
 
         replace.Append(
             //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
@@ -503,16 +499,14 @@ public class TileManager : MonoBehaviour
             })
         );
 
-        Debug.Log("false 1 = " + replace.IsPlaying());
-
         return replace;
     }
     
 
     //sequence to replace a list of cartiles, each deleted at delay time given
-    public Sequence ReplaceList(List<GameObject> list, float delay = 0)
+    Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
-        Sequence replace = DOTween.Sequence().Pause().SetAutoKill(false);
+        Sequence replace = DOTween.Sequence().Pause();
 
         if (list != null)
         {
@@ -524,13 +518,11 @@ public class TileManager : MonoBehaviour
                 {
                     Debug.Log("manager C");
                     replace.Insert(0, ReplaceSequence(obj, delay).Pause());
-                    Debug.Log("false = " + replace.IsPlaying());
                     Debug.Log("manager D");
                 }
                 Debug.Log("manager E");
             }
         }
-
 
         return replace;
     }
@@ -538,11 +530,9 @@ public class TileManager : MonoBehaviour
     //replace all match 3s, at delay specified
     public IEnumerator ReplaceMatch3s(float delay = 0, Tween tween = null, int layer = 0)
     {
-        //Debug.Break();
         if (tween != null && tween.IsActive())
         {
             yield return tween.WaitForCompletion();
-            tween.Kill();
         }
 
         //for every different tile type
@@ -556,22 +546,15 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                Sequence replaceList = DOTween.Sequence().Pause().SetAutoKill(false);
-
-                Debug.Log("manager 1 layer " + layer);
-                Debug.Log(replaceList.IsPlaying() + " fart layer " + layer);
-
-                replaceList.Append(ReplaceList(match3, delay));
-
+                Sequence replaceList = ReplaceList(match3, delay).Pause();
                 replaceList.Play();
+                Debug.Log("manager 1 layer " + layer);
 
-
-                Debug.Log(replaceList.IsPlaying() + " layer " + layer);
-
-
-                yield return replaceList.WaitForCompletion();
-                replaceList.Kill();
-
+                if (replaceList != null && replaceList.IsActive())
+                {
+                    Debug.Log(replaceList.IsPlaying() + " layer " + layer);
+                    yield return replaceList.WaitForCompletion();
+                }
                 Debug.Log("manager 2 layer " + layer);
                 yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
                 Debug.Log("manager 3 layer " + layer);
