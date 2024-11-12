@@ -40,7 +40,7 @@ public class EnemySpawner : MonoBehaviour
         {
             if (!spawnActive)
             {
-                DOVirtual.DelayedCall(spawnRate, SpawnEnemy).Play()
+                DOVirtual.DelayedCall(spawnRate, SpawnEnemy)
                     .OnStart(() =>
                     {
                         spawnActive = true;
@@ -55,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
             }
             if (!scoreActive)
             {
-                DOVirtual.DelayedCall(.1f, () => GameManager.gameManager.IncreaseScore(enemySpeed)).Play()
+                DOVirtual.DelayedCall(.1f, () => GameManager.gameManager.IncreaseScore(enemySpeed))
                     .OnStart(() =>
                     {
                         scoreActive = true;
