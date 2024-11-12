@@ -32,7 +32,7 @@ public class TileManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        EventManager.GameOver.AddListener(Stop);
+        //EventManager.GameOver.AddListener(Stop);
 
         tilePrefabs = Resources.LoadAll<GameObject>("Car Tiles");
 
@@ -44,7 +44,7 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("Bart :)  " + amtClicked);
+
     }
 
     void GridAssign()
@@ -473,7 +473,7 @@ public class TileManager : MonoBehaviour
         int col = tile.GetComponent<CarTile>().GetColumn();
 
         //create sequence
-        Sequence replace = DOTween.Sequence();
+        Sequence replace = DOTween.Sequence().Pause();
 
         replace.Append(
             //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
@@ -506,16 +506,21 @@ public class TileManager : MonoBehaviour
     //sequence to replace a list of cartiles, each deleted at delay time given
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
-        Sequence replace = DOTween.Sequence();
+        Sequence replace = DOTween.Sequence().Pause();
 
         if (list != null)
         {
+            Debug.Log("manager A");
             if (list.Count > 0)
             {
+                Debug.Log("manager B");
                 foreach (GameObject obj in list)
                 {
-                    replace.Insert(0, ReplaceSequence(obj, delay));
+                    Debug.Log("manager C");
+                    replace.Insert(0, ReplaceSequence(obj, delay).Pause());
+                    Debug.Log("manager D");
                 }
+                Debug.Log("manager E");
             }
         }
 
@@ -523,7 +528,7 @@ public class TileManager : MonoBehaviour
     }
 
     //replace all match 3s, at delay specified
-    public IEnumerator ReplaceMatch3s(float delay = 0, Tween tween = null)
+    public IEnumerator ReplaceMatch3s(float delay = 0, Tween tween = null, int layer = 0)
     {
         if (tween != null && tween.IsActive())
         {
@@ -541,10 +546,18 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                Sequence replaceList = ReplaceList(match3, delay);
+                Sequence replaceList = ReplaceList(match3, delay).Pause();
                 replaceList.Play();
-                yield return replaceList.WaitForCompletion();
-                yield return StartCoroutine(ReplaceMatch3s(delay, tween));
+                Debug.Log("manager 1 layer " + layer);
+
+                if (replaceList != null && replaceList.IsActive())
+                {
+                    Debug.Log(replaceList.IsPlaying() + " layer " + layer);
+                    yield return replaceList.WaitForCompletion();
+                }
+                Debug.Log("manager 2 layer " + layer);
+                yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
+                Debug.Log("manager 3 layer " + layer);
             }
         }
     }

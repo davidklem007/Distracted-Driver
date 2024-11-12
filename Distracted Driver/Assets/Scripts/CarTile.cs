@@ -148,12 +148,14 @@ public class CarTile : MonoBehaviour
 
     IEnumerator ReplaceMatch3sAndDecreaseSpeed(float delay, Tween tween)
     {
+        Debug.Log("1 (" + row + ", " + column + ")");
         yield return StartCoroutine(TileManager.tileManager.ReplaceMatch3s(delay, tween));
-
-        for(int i = 0; i < TileManager.tileManager.GetMatchesCount(); i++)
+        Debug.Log("2 (" + row + ", " + column + ")");
+        for (int i = 0; i < TileManager.tileManager.GetMatchesCount(); i++)
         {
             GameManager.gameManager.DecreaseSpeed();
-            Debug.Log("Sped decreaz");
+            Debug.Log("Sped decreaz (" + row + ", " + column + ")");
         }
+        Debug.Log("3 (" + row + ", " + column + ")");
     }
 }
