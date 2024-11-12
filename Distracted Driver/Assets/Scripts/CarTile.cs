@@ -201,7 +201,7 @@ public class CarTile : MonoBehaviour
             //StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
             Sequence fart = DOTween.Sequence();
 
-            yield return fart.Append(TileManager.tileManager.ReplaceList(thisMatch3, 0.3f)).WaitForCompletion();
+            yield return fart.Append(TileManager.tileManager.ReplaceList(otherMatch3, 0.3f)).WaitForCompletion();
             Debug.Log("AAAAAAAAAAAAA");
         }
 

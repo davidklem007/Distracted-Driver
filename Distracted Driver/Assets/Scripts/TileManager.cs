@@ -523,7 +523,36 @@ public class TileManager : MonoBehaviour
                 foreach (GameObject obj in list)
                 {
                     Debug.Log("manager C");
-                    replace.Insert(0, ReplaceSequence(obj, delay).Pause());
+                        Vector3 position = obj.transform.position;
+                        int row = obj.GetComponent<CarTile>().GetRow();
+                        int col = obj.GetComponent<CarTile>().GetColumn();
+
+                        //create sequence
+                       
+
+                        replace.Append(
+                            //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
+                            DOVirtual.DelayedCall(delay, () =>
+                            {
+                                tiles.Remove(obj);
+                                if (obj.GetComponent<CarTile>().isClicked())
+                                {
+                                    obj.GetComponent<CarTile>().Deselect();
+                                }
+                                Destroy(obj);
+                            })
+                        );
+
+                        //spawn random new tile with same coordinates and position as old tile
+                        replace.Append(
+                            DOVirtual.DelayedCall(delay, () =>
+                            {
+                                int carNum = Random.Range(0, tilePrefabs.Length);
+                                GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
+                                carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
+                                tiles.Add(carTile);
+                            })
+                        );
                     Debug.Log("false = " + replace.IsPlaying());
                     Debug.Log("manager D");
                 }
