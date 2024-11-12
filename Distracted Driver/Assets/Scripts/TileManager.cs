@@ -543,6 +543,8 @@ public class TileManager : MonoBehaviour
             yield return tween.WaitForCompletion();
         }
 
+        Sequence replaceList = DOTween.Sequence().Pause();
+
         //for every different tile type
         for (int i = 0; i < tilePrefabs.Length; i++)
         {
@@ -554,21 +556,18 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                Sequence replaceList = ReplaceList(match3, delay).Pause();
-                replaceList.Play();
-                Debug.Log("manager 1 layer " + layer);
-
-                if (replaceList != null && replaceList.IsActive())
-                {
-                    Debug.Log(replaceList.IsPlaying() + " layer " + layer);
-                    yield return replaceList.WaitForCompletion();
-                }
-                Debug.Log("manager 2 layer " + layer);
-                yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
-                Debug.Log("manager 3 layer " + layer);
+                replaceList.Append(ReplaceList(match3, delay));
                 
+                Debug.Log("manager 1 layer " + layer);
             }
         }
+
+        yield return replaceList.Play().WaitForCompletion();
+
+        Debug.Log("manager 2 layer " + layer);
+
+        yield return StartCoroutine(ReplaceMatch3s(delay, tween, layer + 1));
+        Debug.Log("manager 3 layer " + layer);
     }
 
     IEnumerator ReplaceMatch3sAtStart()
