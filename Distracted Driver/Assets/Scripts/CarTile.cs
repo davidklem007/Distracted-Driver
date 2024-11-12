@@ -49,7 +49,7 @@ public class CarTile : MonoBehaviour
                     if (TileManager.tileManager.IsAdjacent(this, otherTile))
                     {
                         Select();
-                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile);
+                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile).Play();
 
                         List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
                         List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(this));
@@ -69,7 +69,7 @@ public class CarTile : MonoBehaviour
                         
                         if(otherMatch3.Count == 0 && thisMatch3.Count == 0)
                         {
-                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile));
+                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile).Play());
                         }
                         else
                         {

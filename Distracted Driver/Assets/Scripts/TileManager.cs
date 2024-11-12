@@ -180,7 +180,7 @@ public class TileManager : MonoBehaviour
     }
 
     //Tiles swap positions, and deselected
-    public Tween SwapTiles(CarTile tile1, CarTile tile2, bool kill = true)
+    public Sequence SwapTiles(CarTile tile1, CarTile tile2, bool kill = true)
     {
         GameObject objTile1 = tile1.gameObject;
         GameObject objTile2 = tile2.gameObject;
@@ -191,14 +191,11 @@ public class TileManager : MonoBehaviour
 
         tile1.SetCar(tile2.GetRow(), tile2.GetColumn(), tile1.GetNum());
         tile2.SetCar(row1, col1, tile2.GetNum());
-        Tween move = objTile1.transform.DOMove(objTile2.transform.position, 0.2f)
-            .SetEase(Ease.OutCubic)
+
+        Sequence move = DOTween.Sequence().Pause()
             .OnStart(() =>
             {
                 moving = true;
-                objTile2.transform.DOMove(pos1, 0.2f)
-                    .SetEase(Ease.OutCubic);
-
             })
             .OnComplete(() =>
             {
@@ -206,8 +203,15 @@ public class TileManager : MonoBehaviour
                 tile2.GetComponent<CarTile>().Deselect();
                 amtClicked = 0;
                 moving = false;
+                Debug.Log("CAn u find me");
             })
             .SetAutoKill(kill);
+
+        move.Insert(0, objTile1.transform.DOMove(objTile2.transform.position, 0.2f).SetEase(Ease.OutCubic));
+
+        move.Insert(0, objTile2.transform.DOMove(pos1, 0.2f).SetEase(Ease.OutCubic));
+
+
 
         return move;
     }
