@@ -39,7 +39,8 @@ public class CarTile : MonoBehaviour
             else if(!clicked && TileManager.tileManager.amtClicked <= 1)
             {
 
-                StartCoroutine(TileManager.tileManager.ManageClicks(this));
+                Select();
+                //StartCoroutine(TileManager.tileManager.ManageClicks(this));
                 /*
                 //if tile clicked is second tile selected
                 if(TileManager.tileManager.amtClicked == 1)
@@ -137,6 +138,10 @@ public class CarTile : MonoBehaviour
     {
         clicked = false;
         TileManager.tileManager.amtClicked--;
+        if(TileManager.tileManager.amtClicked < 0)
+        {
+            TileManager.tileManager.amtClicked = 0;
+        }
         gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
     }
 

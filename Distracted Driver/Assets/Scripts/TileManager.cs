@@ -32,7 +32,7 @@ public class TileManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //EventManager.GameOver.AddListener(Stop);
+        EventManager.GameOver.AddListener(Stop);
 
         tilePrefabs = Resources.LoadAll<GameObject>("Car Tiles");
 
@@ -44,7 +44,11 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if(amtClicked == 2)
+        {
+            amtClicked = 0;
+            StartCoroutine(ManageClicked());
+        }
     }
 
     void GridAssign()
@@ -206,7 +210,6 @@ public class TileManager : MonoBehaviour
             {
                 tile1.GetComponent<CarTile>().Deselect();
                 tile2.GetComponent<CarTile>().Deselect();
-                amtClicked = 0;
                 moving = false;
             })
             .SetAutoKill(kill);
@@ -654,6 +657,78 @@ public class TileManager : MonoBehaviour
         {
             carTile.Select();
         }
+    }
+
+    public IEnumerator ManageClicked()
+    {
+        //if tile clicked is second tile selecte
+            //get tiles selected
+            List<GameObject> selected = tiles.FindAll(tile => tile.GetComponent<CarTile>().isClicked());
+
+            CarTile carTile1 = selected[0].GetComponent<CarTile>();
+            CarTile carTile2 = selected[1].GetComponent<CarTile>();
+
+            //if tile is adjacent swap tiles
+            //then get list of all matching tiles, then use that list to get match 3s
+            if (IsAdjacent(carTile1, carTile2))
+            {
+
+                Sequence swap1 = DOTween.Sequence().SetAutoKill(false);
+
+                yield return swap1.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
+
+                swap1.Kill();
+
+                List<GameObject> otherMatch3 = Match3(AdjacentMatches(carTile1));
+                List<GameObject> thisMatch3 = Match3(AdjacentMatches(carTile2));
+
+                /*
+                foreach (GameObject g in otherMatch3)
+                {
+                    Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                }
+
+                foreach (GameObject g in thisMatch3)
+                {
+                    Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
+                }
+
+                */
+
+                if (otherMatch3.Count == 0 && thisMatch3.Count == 0)
+                {
+                    yield return new WaitForSeconds(0.15f);
+
+                    Sequence swap2 = DOTween.Sequence().SetAutoKill(false);
+
+                    yield return swap2.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
+
+                    swap2.Kill();
+
+                }
+                else
+                {
+                    yield return StartCoroutine(ReplaceMatch3s(0.3f));
+
+                    for (int i = 0; i < GetMatchesCount(); i++)
+                    {
+                        GameManager.gameManager.DecreaseSpeed();
+                        Debug.Log("Sped decreaz");
+                    }
+
+
+                    Debug.Log("yeah yeah");
+                }
+            }
+            //if this tile is not adjacent, deselect all
+            else
+            {
+                yield return new WaitForSeconds(0.3f);
+
+                yield return DeselectAll(carTile1, carTile2).WaitForCompletion();
+            }
+        
+
     }
 
     void Stop()
