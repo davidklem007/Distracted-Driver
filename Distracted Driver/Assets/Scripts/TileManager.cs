@@ -92,7 +92,7 @@ public class TileManager : MonoBehaviour
     }
 
     //find clicked car tile
-    public CarTile FindOther()
+    CarTile FindOther()
     {
         CarTile otherTile = tiles.Find(obj => obj.GetComponent<CarTile>().isClicked()).GetComponent<CarTile>();
         return otherTile;

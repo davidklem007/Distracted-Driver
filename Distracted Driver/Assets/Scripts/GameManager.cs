@@ -44,11 +44,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Menu", LoadSceneMode.Single);
     }
 
-    public void Restart()
-    {
-        SceneManager.LoadScene("Main Scene");
-    }
-
     public int IncreaseScore()
     {
         if (!stop)
