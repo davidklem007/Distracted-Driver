@@ -154,17 +154,4 @@ public class CarTile : MonoBehaviour
     {
         return row == other.GetRow() && column == other.GetColumn() && num == other.GetNum();
     }
-
-    IEnumerator ReplaceMatch3sAndDecreaseSpeed(float delay, Tween tween)
-    {
-        Debug.Log("1 (" + row + ", " + column + ")");
-        yield return StartCoroutine(TileManager.tileManager.ReplaceMatch3s(delay, tween));
-        Debug.Log("2 (" + row + ", " + column + ")");
-        for (int i = 0; i < TileManager.tileManager.GetMatchesCount(); i++)
-        {
-            GameManager.gameManager.DecreaseSpeed();
-            Debug.Log("Sped decreaz (" + row + ", " + column + ")");
-        }
-        Debug.Log("3 (" + row + ", " + column + ")");
-    }
 }
