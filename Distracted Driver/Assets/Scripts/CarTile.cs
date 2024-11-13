@@ -38,62 +38,7 @@ public class CarTile : MonoBehaviour
             //if tile isn't already selected and clicked on, and up to one other tile is selected
             else if(!clicked && TileManager.tileManager.amtClicked <= 1)
             {
-
                 Select();
-                //StartCoroutine(TileManager.tileManager.ManageClicks(this));
-                /*
-                //if tile clicked is second tile selected
-                if(TileManager.tileManager.amtClicked == 1)
-                {
-                    //get other tile that's selected
-                    CarTile otherTile = TileManager.tileManager.FindOther();
-
-                    //if tile is adjacent swap tiles
-                    //then get list of all matching tiles, then use that list to get match 3s
-                    if (TileManager.tileManager.IsAdjacent(this, otherTile))
-                    {
-                        Select();
-                        Tween swap1 = TileManager.tileManager.SwapTiles(this, otherTile).Play();
-
-                        List<GameObject> otherMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(otherTile));
-                        List<GameObject> thisMatch3 = TileManager.tileManager.Match3(TileManager.tileManager.AdjacentMatches(this));
-
-                        /*
-                        foreach (GameObject g in otherMatch3)
-                        {
-                            Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-                        }
-
-                        foreach (GameObject g in thisMatch3)
-                        {
-                            Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-                        }
-
-                        
-                        
-                        if(otherMatch3.Count == 0 && thisMatch3.Count == 0)
-                        {
-                            DOVirtual.DelayedCall(0.3f, () => TileManager.tileManager.SwapTiles(this, otherTile).Play());
-                        }
-                        else
-                        {
-                            StartCoroutine(ReplaceMatch3sAndDecreaseSpeed(0.3f, swap1));
-                        }
-                    }
-                    //if this tile is not adjacent, deselect all
-                    else
-                    {
-                        Select();
-                        DOVirtual.DelayedCall(0.3f, ()=> TileManager.tileManager.DeselectAll(this, otherTile));
-                    }
-
-                }
-                //if no other tiles clicked, select tile
-                else
-                {
-                    Select();
-                }
-                */
             }
         }
     }
