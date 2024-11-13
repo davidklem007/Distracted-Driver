@@ -14,7 +14,7 @@ public class EnemySpawner : MonoBehaviour
     float spawnRate;
     //speed is negative for enemy car
     float enemySpeed = 3;
-    float differencer = 0.03f;
+    float differencer = 0.08f;
 
     bool scoreActive = false;
     bool spawnActive = false;
@@ -55,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
             }
             if (!scoreActive)
             {
-                DOVirtual.DelayedCall(.1f, () => GameManager.gameManager.IncreaseScore(enemySpeed))
+                DOVirtual.DelayedCall(.1f, () => GameManager.gameManager.IncreaseScore())
                     .OnStart(() =>
                     {
                         scoreActive = true;
@@ -93,31 +93,31 @@ public class EnemySpawner : MonoBehaviour
             {
                 case 1:
                     Instantiate(enemyPrefab, new Vector3(leftBounds, 9.5f, 0), Quaternion.identity);
-                    enemySpeed = speed1;
+                    //enemySpeed = speed1;
                     break;
                 case 2:
                     Instantiate(enemyPrefab, new Vector3(middleBounds, 9.5f, 0), Quaternion.identity);
-                    enemySpeed = speed1;
+                    //enemySpeed = speed1;
                     break;
                 case 3:
                     Instantiate(enemyPrefab, new Vector3(rightBounds, 9.5f, 0), Quaternion.identity);
-                    enemySpeed = speed1;
+                    //enemySpeed = speed1;
                     break;
                 case 4:
                     Instantiate(enemyPrefab, new Vector3(rightBounds, 9.5f, 0), Quaternion.identity);
                     Instantiate(enemyPrefab2, new Vector3(leftBounds, 9.5f, 0), Quaternion.identity);
                     //set speed to generated speeds average
-                    enemySpeed = (speed1 + speed2) / 2;
+                    //enemySpeed = (speed1 + speed2) / 2;
                     break;
                 case 5:
                     Instantiate(enemyPrefab, new Vector3(rightBounds, 9.5f, 0), Quaternion.identity);
                     Instantiate(enemyPrefab2, new Vector3(middleBounds, 9.5f, 0), Quaternion.identity);
-                    enemySpeed = (speed1 + speed2) / 2;
+                    //enemySpeed = (speed1 + speed2) / 2;
                     break;
                 case 6:
                     Instantiate(enemyPrefab, new Vector3(leftBounds, 9.5f, 0), Quaternion.identity);
                     Instantiate(enemyPrefab2, new Vector3(middleBounds, 9.5f, 0), Quaternion.identity);
-                    enemySpeed = (speed1 + speed2) / 2;
+                    //enemySpeed = (speed1 + speed2) / 2;
                     break;
 
             }

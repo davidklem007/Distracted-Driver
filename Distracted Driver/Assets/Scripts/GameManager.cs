@@ -44,19 +44,18 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public int IncreaseScore(float enemSped)
+    public int IncreaseScore()
     {
         if (!stop)
         {
-            for (int i = 0; i < (int) enemSped; i++)
+            for (int i = 0; i < (int) enemySpeed; i++)
             {
                 score++;
                 scoreText.text = string.Format("Score: {0}       Speed: {1:#.00}x", score, enemySpeed - 2);
                 if (score % 250 == 0 && score > 10)
                 {
                     Debug.Log("yurrr");
-                    enemySpeed = enemSped + (enemSped * .15f);
-
+                    IncreaseSpeed(0.15f);
                 }
             }
 
@@ -75,6 +74,8 @@ public class GameManager : MonoBehaviour
         {
             obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
         }
+
+
 
         return enemySpeed;
     }

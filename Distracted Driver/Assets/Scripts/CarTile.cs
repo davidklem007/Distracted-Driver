@@ -36,7 +36,7 @@ public class CarTile : MonoBehaviour
                 Deselect();
             }
             //if tile isn't already selected and clicked on, and up to one other tile is selected
-            else if(!clicked && TileManager.tileManager.amtClicked <= 1)
+            else if(!clicked && TileManager.tileManager.amtClicked <= 1 && !TileManager.tileManager.moving)
             {
                 Select();
             }

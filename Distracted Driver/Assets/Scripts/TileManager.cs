@@ -49,6 +49,8 @@ public class TileManager : MonoBehaviour
             amtClicked = 0;
             StartCoroutine(ManageClicks());
         }
+
+        Debug.Log(moving);
     }
 
     void GridAssign()
@@ -211,7 +213,6 @@ public class TileManager : MonoBehaviour
             {
                 tile1.GetComponent<CarTile>().Deselect();
                 tile2.GetComponent<CarTile>().Deselect();
-                moving = false;
             })
             .SetAutoKill(kill);
 
@@ -682,10 +683,14 @@ public class TileManager : MonoBehaviour
 
                 swap2.Kill();
 
+                moving = false;
+
             }
             else
             {
                 yield return StartCoroutine(ReplaceMatch3s(0.3f));
+
+                moving = false;
 
                 int num = GetMatchesCount() - 1;
 
