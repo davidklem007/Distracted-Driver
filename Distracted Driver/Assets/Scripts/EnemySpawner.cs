@@ -14,7 +14,7 @@ public class EnemySpawner : MonoBehaviour
     float spawnRate;
     //speed is negative for enemy car
     float enemySpeed = 3;
-    float differencer = 0;
+    float differencer = 0.03f;
 
     bool scoreActive = false;
     bool spawnActive = false;

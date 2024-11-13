@@ -68,12 +68,28 @@ public class GameManager : MonoBehaviour
     public float DecreaseSpeed(float increment = 0.03f)
     {
         enemySpeed -= enemySpeed * increment;
+
+        GameObject[] enemis = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach(GameObject obj in enemis)
+        {
+            obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
+        }
+
         return enemySpeed;
     }
 
     public float IncreaseSpeed(float increment = 0.25f)
     {
         enemySpeed += enemySpeed * increment;
+
+        GameObject[] enemis = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject obj in enemis)
+        {
+            obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
+        }
+
         return enemySpeed;
     }
 
