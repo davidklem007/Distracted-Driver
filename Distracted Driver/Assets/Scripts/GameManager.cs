@@ -71,6 +71,12 @@ public class GameManager : MonoBehaviour
         return enemySpeed;
     }
 
+    public float IncreaseSpeed(float increment = 0.25f)
+    {
+        enemySpeed += enemySpeed * increment;
+        return enemySpeed;
+    }
+
     public int GetScore()
     {
         return score;

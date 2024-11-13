@@ -707,6 +707,24 @@ public class TileManager : MonoBehaviour
 
     }
 
+    public void Reset()
+    {
+        if (!stop)
+        {
+            foreach (GameObject obj in tiles)
+            {
+
+                Destroy(obj);
+            }
+
+            tiles.Clear();
+
+            GridAssign();
+
+            GameManager.gameManager.IncreaseSpeed();
+        }
+    }
+
     void Stop()
     {
         stop = true;
