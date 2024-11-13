@@ -36,15 +36,16 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         stop = true;
-        restartButton.SetActive(true);
+    }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene("Menu", LoadSceneMode.Single);
     }
 
     public void Restart()
     {
-        if (!TileManager.tileManager.moving)
-        {
-            SceneManager.LoadScene("Main Scene");
-        }
+        SceneManager.LoadScene("Main Scene");
     }
 
     public int IncreaseScore()
