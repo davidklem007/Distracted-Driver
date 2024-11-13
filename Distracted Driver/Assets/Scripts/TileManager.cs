@@ -83,6 +83,7 @@ public class TileManager : MonoBehaviour
 
         //remove match 3s
         StartCoroutine(ReplaceMatch3sAtStart());
+        match3sCount = 0;
     }
 
     Vector3 Offset(Vector3 vector)
@@ -270,7 +271,7 @@ public class TileManager : MonoBehaviour
     }
 
     //returns list of all tiles that are a set of 3 or more in the list given
-    public List<GameObject> Match3(List<GameObject> matches)
+    List<GameObject> Match3rd(List<GameObject> matches)
     {
         List<GameObject> matches3 = new List<GameObject>();
 
@@ -475,6 +476,87 @@ public class TileManager : MonoBehaviour
         return matches3;
     }
 
+    List<GameObject> Match3(List<GameObject> matches)
+    {
+        List<GameObject> matches3 = new List<GameObject>();
+        int matched = 0;
+
+        // Sort by row, then by column
+        matches.Sort((tile1, tile2) =>
+        {
+            CarTile carTile1 = tile1.GetComponent<CarTile>();
+            CarTile carTile2 = tile2.GetComponent<CarTile>();
+            int rowComparison = carTile1.GetRow().CompareTo(carTile2.GetRow());
+            return rowComparison == 0 ? carTile1.GetColumn().CompareTo(carTile2.GetColumn()) : rowComparison;
+        });
+
+        // Horizontal check for groups of 3 or more
+        for (int i = 0; i < matches.Count - 1; i++)
+        {
+            GameObject horizontal = GetHorizontalAdjacent(matches[i]);
+
+            if (horizontal != null && matches[i + 1] == horizontal)
+            {
+                matched = (matched == 0) ? 2 : matched + 1;
+            }
+            else
+            {
+                if (matched >= 3)
+                {
+                    AddMatchGroup(matches, matches3, i, matched);
+                }
+                matched = 0;
+            }
+        }
+        if (matched >= 3) AddMatchGroup(matches, matches3, matches.Count - 1, matched);
+        matched = 0;
+
+        // Sort by column, then by row for vertical check
+        matches.Sort((tile1, tile2) =>
+        {
+            CarTile carTile1 = tile1.GetComponent<CarTile>();
+            CarTile carTile2 = tile2.GetComponent<CarTile>();
+            int colComparison = carTile1.GetColumn().CompareTo(carTile2.GetColumn());
+            return colComparison == 0 ? carTile1.GetRow().CompareTo(carTile2.GetRow()) : colComparison;
+        });
+
+        // Vertical check for groups of 3 or more
+        for (int i = 0; i < matches.Count - 1; i++)
+        {
+            GameObject vertical = GetVerticalAdjacent(matches[i]);
+
+            if (vertical != null && matches[i + 1] == vertical)
+            {
+                matched = (matched == 0) ? 2 : matched + 1;
+            }
+            else
+            {
+                if (matched >= 3)
+                {
+                    AddMatchGroup(matches, matches3, i, matched);
+                }
+                matched = 0;
+            }
+        }
+        if (matched >= 3) AddMatchGroup(matches, matches3, matches.Count - 1, matched);
+
+        return matches3;
+    }
+
+    // Helper function to add matches and increment count
+    private void AddMatchGroup(List<GameObject> matches, List<GameObject> matches3, int endIndex, int matchedCount)
+    {
+        match3sCount++;
+        for (int x = 0; x < matchedCount; x++)
+        {
+            if (!matches3.Contains(matches[endIndex - x]))
+            {
+                matches3.Add(matches[endIndex - x]);
+            }
+        }
+    }
+
+
     //sequence for replacing a tile
     Sequence ReplaceSequence(GameObject tile, float delay = 0)
     {
@@ -590,19 +672,6 @@ public class TileManager : MonoBehaviour
             List<GameObject> otherMatch3 = Match3(AdjacentMatches(carTile1));
             List<GameObject> thisMatch3 = Match3(AdjacentMatches(carTile2));
 
-            /*
-            foreach (GameObject g in otherMatch3)
-            {
-                Debug.Log("other: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-            }
-
-            foreach (GameObject g in thisMatch3)
-            {
-                Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-            }
-
-            */
-
             if (otherMatch3.Count == 0 && thisMatch3.Count == 0)
             {
                 yield return new WaitForSeconds(0.15f);
@@ -618,14 +687,13 @@ public class TileManager : MonoBehaviour
             {
                 yield return StartCoroutine(ReplaceMatch3s(0.3f));
 
-                for (int i = 0; i < GetMatchesCount(); i++)
+                int num = GetMatchesCount() - 1;
+
+                for (int i = 0; i < num; i++)
                 {
                     GameManager.gameManager.DecreaseSpeed();
-                    Debug.Log("Sped decreaz");
                 }
-
-
-                Debug.Log("yeah yeah");
+                GetMatchesCount();
             }
         }
         //if this tile is not adjacent, deselect all
