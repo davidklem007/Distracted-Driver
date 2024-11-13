@@ -41,7 +41,10 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (!TileManager.tileManager.moving)
+        {
+            SceneManager.LoadScene("Main Scene");
+        }
     }
 
     public int IncreaseScore()
@@ -51,11 +54,11 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < (int) enemySpeed; i++)
             {
                 score++;
-                scoreText.text = string.Format("Score: {0}       Speed: {1:#.00}x", score, enemySpeed - 2);
-                if (score % 250 == 0 && score > 10)
+                scoreText.text = string.Format("Score: {0}       Speed: {1:#.00}x", score, enemySpeed/3);
+                if (score % 100 == 0 && score > 150)
                 {
                     Debug.Log("yurrr");
-                    IncreaseSpeed(0.15f);
+                    IncreaseSpeed(0.05f);
                 }
             }
 
@@ -68,14 +71,14 @@ public class GameManager : MonoBehaviour
     {
         enemySpeed -= enemySpeed * increment;
 
+        if (enemySpeed < 3) enemySpeed = 3;
+
         GameObject[] enemis = GameObject.FindGameObjectsWithTag("Enemy");
 
         foreach(GameObject obj in enemis)
         {
             obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
         }
-
-
 
         return enemySpeed;
     }

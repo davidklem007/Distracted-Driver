@@ -49,8 +49,6 @@ public class TileManager : MonoBehaviour
             amtClicked = 0;
             StartCoroutine(ManageClicks());
         }
-
-        Debug.Log(moving);
     }
 
     void GridAssign()
@@ -714,7 +712,7 @@ public class TileManager : MonoBehaviour
 
     public void Reset()
     {
-        if (!stop)
+        if (!stop && !moving)
         {
             foreach (GameObject obj in tiles)
             {
