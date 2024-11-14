@@ -606,6 +606,10 @@ public class TileManager : MonoBehaviour
         int row = tile.GetComponent<CarTile>().GetRow();
         int col = tile.GetComponent<CarTile>().GetColumn();
 
+        List<GameObject> deleted = new List<GameObject>();
+        List<int> deletedCols = new List<int>();
+        int maxHeight = -1;
+
         //create sequence
         Sequence replace = DOTween.Sequence().Pause();
 
