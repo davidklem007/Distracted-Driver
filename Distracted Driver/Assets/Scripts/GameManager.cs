@@ -2,13 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
 
     [SerializeField] GameObject restartButton;
     [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] Image snail;
+    [SerializeField] Image fast;
+
     int score = 0;
     float enemySpeed = 3;
 
@@ -40,7 +45,7 @@ public class GameManager : MonoBehaviour
 
     public void Menu()
     {
-        
+        DOTween.CompleteAll();
         SceneManager.LoadScene("Menu", LoadSceneMode.Single);
     }
 
@@ -77,18 +82,47 @@ public class GameManager : MonoBehaviour
             obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
         }
 
+        if (!stop)
+        {
+            Sequence fade = DOTween.Sequence().Pause();
+
+            fade.Append(snail.DOFade(1, .3f).SetEase(Ease.OutSine));
+            fade.AppendInterval(.5f);
+            fade.Append(snail.DOFade(0, .3f).SetEase(Ease.OutSine));
+
+            fade.Play();
+        }
+
         return enemySpeed;
     }
 
-    public float IncreaseSpeed(float increment = 0.25f)
+    public float IncreaseSpeed(float increment = 0.25f, bool exp = true)
     {
-        enemySpeed += enemySpeed * increment;
+        if (exp)
+        {
+            enemySpeed += enemySpeed * increment;
+        }
+        else
+        {
+            enemySpeed += increment;
+        }
 
         GameObject[] enemis = GameObject.FindGameObjectsWithTag("Enemy");
 
         foreach (GameObject obj in enemis)
         {
             obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
+        }
+
+        if (!stop && increment >= 0.25f)
+        {
+            Sequence fade = DOTween.Sequence().Pause();
+
+            fade.Append(fast.DOFade(1, .3f).SetEase(Ease.OutSine));
+            fade.AppendInterval(.5f);
+            fade.Append(fast.DOFade(0, .3f).SetEase(Ease.OutSine));
+
+            fade.Play();
         }
 
         return enemySpeed;

@@ -724,7 +724,7 @@ public class TileManager : MonoBehaviour
 
             GridAssign();
 
-            GameManager.gameManager.IncreaseSpeed();
+            GameManager.gameManager.IncreaseSpeed(0.5f, false);
         }
     }
 
