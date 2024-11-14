@@ -593,7 +593,37 @@ public class TileManager : MonoBehaviour
 
         return replace;
     }
-    
+
+    //sequence for replacing a tile
+    Sequence ReplaceSequenceGravity(GameObject tile, float delay = 0)
+    {
+        //get position and coordinates of tile
+        Vector3 position = tile.transform.position;
+        int row = tile.GetComponent<CarTile>().GetRow();
+        int col = tile.GetComponent<CarTile>().GetColumn();
+
+        //create sequence
+        Sequence replace = DOTween.Sequence().Pause();
+
+        replace.Append(
+            //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
+            DOVirtual.DelayedCall(delay, () =>
+            {
+                tiles.Remove(tile);
+                if (tile.GetComponent<CarTile>().isClicked())
+                {
+                    tile.GetComponent<CarTile>().Deselect();
+                }
+                Destroy(tile);
+            })
+        );
+
+        
+
+
+        return replace;
+    }
+
 
     //sequence to replace a list of cartiles, each deleted at delay time given
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
