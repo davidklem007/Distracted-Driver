@@ -598,41 +598,6 @@ public class TileManager : MonoBehaviour
         return replace;
     }
 
-    //sequence for replacing a tile
-    Sequence ReplaceSequenceGravity(GameObject tile, float delay = 0)
-    {
-        //get position and coordinates of tile
-        Vector3 position = tile.transform.position;
-        int row = tile.GetComponent<CarTile>().GetRow();
-        int col = tile.GetComponent<CarTile>().GetColumn();
-
-        List<GameObject> deleted = new List<GameObject>();
-        List<int> deletedCols = new List<int>();
-        int maxHeight = -1;
-
-        //create sequence
-        Sequence replace = DOTween.Sequence().Pause();
-
-        replace.Append(
-            //remove tile from tiles list, then make sure it's deselecte to account for amtClicked, then destroy
-            DOVirtual.DelayedCall(delay, () =>
-            {
-                tiles.Remove(tile);
-                if (tile.GetComponent<CarTile>().isClicked())
-                {
-                    tile.GetComponent<CarTile>().Deselect();
-                }
-                Destroy(tile);
-            })
-        );
-
-        
-
-
-        return replace;
-    }
-
-
     //sequence to replace a list of cartiles, each deleted at delay time given
     Sequence ReplaceList(List<GameObject> list, float delay = 0)
     {
@@ -675,6 +640,56 @@ public class TileManager : MonoBehaviour
                 replaceList.Insert(0, ReplaceList(match3, delay));
             }
         }
+
+        yield return replaceList.Play().WaitForCompletion();
+
+
+        //yield return new WaitUntil(() => moving == false);
+        if (curCount > 0)
+        {
+            yield return StartCoroutine(ReplaceMatch3s(delay));
+        }
+        Debug.Log("yeaovn");
+    }
+
+    IEnumerator ReplaceMatch3rd(float delay = 0)
+    {
+        List<GameObject> deleted = new List<GameObject>();
+        List<int> deletedCols = new List<int>();
+        int maxHeight = -1;
+        int curCount = 0;
+
+        Sequence replaceList = DOTween.Sequence().Pause()
+            .OnStart(() => { moving = true; })
+            .OnKill(() => { moving = false; });
+        //for every different tile type
+        for (int i = 0; i < tilePrefabs.Length; i++)
+        {
+            //get all tiles of the tile type i
+            List<GameObject> matches = tiles.FindAll(tile => tile.GetComponent<CarTile>().GetNum() == i);
+            //get all match 3s of those tiles
+            List<GameObject> match3 = Match3(matches);
+
+            //if match 3s found, repeat process again
+            foreach (GameObject obj in match3)
+            {
+                if (!deleted.Contains(obj))
+                {
+                    deleted.Add(obj);
+                    if (!deletedCols.Contains(obj.GetComponent<CarTile>().GetColumn()))
+                    {
+                        deletedCols.Add(obj.GetComponent<CarTile>().GetColumn());
+                    }
+                }
+            }
+        }
+
+        curCount = deleted.Count;
+
+
+
+
+
         replaceList.Play();
         if (replaceList != null && replaceList.IsActive())
         {
@@ -688,6 +703,28 @@ public class TileManager : MonoBehaviour
         }
         Debug.Log("yeaovn");
     }
+
+    Sequence ColMove(List<GameObject> list, int col)
+    {
+        int minRow = rows + 1;
+        foreach(GameObject obj in list)
+        {
+            if(obj.GetComponent<CarTile>().GetRow() < minRow)
+            {
+                minRow = obj.GetComponent<CarTile>().GetRow();
+            }
+        }
+
+        //todo hide all in list
+
+        int carNum = Random.Range(0, tilePrefabs.Length);
+        GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
+        carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
+        tiles.Add(carTile);
+
+    }
+
+    Sequence 
 
     IEnumerator ReplaceMatch3sAtStart()
     {
