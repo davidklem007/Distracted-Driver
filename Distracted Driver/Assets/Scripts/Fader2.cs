@@ -11,6 +11,7 @@ public class Fader2 : MonoBehaviour
     void Start()
     {
         gameObject.GetComponent<Image>().DOFade(0, .5f)
+            .SetEase(Ease.InExpo)
             .OnKill(() =>
             {
                 gameObject.SetActive(false);

@@ -44,7 +44,7 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(amtClicked == 2)
+        if (amtClicked == 2 && !moving)
         {
             amtClicked = 0;
             StartCoroutine(ManageClicks());
@@ -211,6 +211,10 @@ public class TileManager : MonoBehaviour
             {
                 tile1.GetComponent<CarTile>().Deselect();
                 tile2.GetComponent<CarTile>().Deselect();
+            })
+            .OnKill(() =>
+            {
+                moving = false;
             })
             .SetAutoKill(kill);
 
@@ -647,6 +651,11 @@ public class TileManager : MonoBehaviour
     //replace all match 3s, at delay specified
     IEnumerator ReplaceMatch3s(float delay = 0)
     {
+        int curCount = 0;
+
+        Sequence replaceList = DOTween.Sequence().Pause()
+            .OnStart(() => { moving = true; })
+            .OnKill(() => { moving = false; });
         //for every different tile type
         for (int i = 0; i < tilePrefabs.Length; i++)
         {
@@ -658,18 +667,22 @@ public class TileManager : MonoBehaviour
             //if match 3s found, repeat process again
             if (match3.Count > 0)
             {
-                Sequence replaceList = ReplaceList(match3, delay);
-                replaceList.Play();
-
-                if (replaceList != null && replaceList.IsActive())
-                {
-                    yield return replaceList.WaitForCompletion();
-                }
-
-                yield return StartCoroutine(ReplaceMatch3s(delay));
-                
+                curCount += match3.Count;
+                replaceList.Insert(0, ReplaceList(match3, delay));
             }
         }
+        replaceList.Play();
+        if (replaceList != null && replaceList.IsActive())
+        {
+            yield return replaceList.WaitForCompletion();
+        }
+
+        //yield return new WaitUntil(() => moving == false);
+        if (curCount > 0)
+        {
+            yield return StartCoroutine(ReplaceMatch3s(delay));
+        }
+        Debug.Log("yeaovn");
     }
 
     IEnumerator ReplaceMatch3sAtStart()
@@ -680,6 +693,7 @@ public class TileManager : MonoBehaviour
 
     public IEnumerator ManageClicks()
     {
+        yield return new WaitUntil(() => moving == false);
         //if tile clicked is second tile selecte
         //get tiles selected
         List<GameObject> selected = tiles.FindAll(tile => tile.GetComponent<CarTile>().isClicked());
@@ -696,12 +710,10 @@ public class TileManager : MonoBehaviour
 
             yield return swap1.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
 
-            swap1.Kill();
+            Match3(AdjacentMatches(carTile1));
+            Match3(AdjacentMatches(carTile2));
 
-            List<GameObject> otherMatch3 = Match3(AdjacentMatches(carTile1));
-            List<GameObject> thisMatch3 = Match3(AdjacentMatches(carTile2));
-
-            if (otherMatch3.Count == 0 && thisMatch3.Count == 0)
+            if (match3sCount == 0)
             {
                 yield return new WaitForSeconds(0.15f);
 
@@ -709,16 +721,17 @@ public class TileManager : MonoBehaviour
 
                 yield return swap2.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
 
-                swap2.Kill();
+                swap1.Kill();
 
-                moving = false;
+                swap2.Kill();
+                
 
             }
             else
             {
-                yield return StartCoroutine(ReplaceMatch3s(0.3f));
+                swap1.Kill();
 
-                moving = false;
+                yield return StartCoroutine(ReplaceMatch3s(0.3f));
 
                 int num = GetMatchesCount() - 1;
 
@@ -726,7 +739,6 @@ public class TileManager : MonoBehaviour
                 {
                     GameManager.gameManager.DecreaseSpeed();
                 }
-                GetMatchesCount();
             }
         }
         //if this tile is not adjacent, deselect all
@@ -754,7 +766,7 @@ public class TileManager : MonoBehaviour
 
             GridAssign();
 
-            GameManager.gameManager.IncreaseSpeed(0.5f, false);
+            GameManager.gameManager.IncreaseSpeed(0.45f, false);
         }
     }
 

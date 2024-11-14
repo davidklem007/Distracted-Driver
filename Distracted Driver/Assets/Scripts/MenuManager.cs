@@ -47,8 +47,6 @@ public class MenuManager : MonoBehaviour
 
         int oldScore = scores.Find(num => num < curScore);
 
-        Debug.Log(scores.IndexOf(oldScore));
-
         scores.Insert(scores.IndexOf(oldScore), curScore);
 
         scoreText1.text = string.Format("	   High Scores{0}1. {1}{0}2. {2}{0}3. {3}{0}4. {4}{0}5. {5}{0}	   You got {6}", System.Environment.NewLine, scores[0], scores[1], scores[2], scores[3], scores[4], curScore);

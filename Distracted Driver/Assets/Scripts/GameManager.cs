@@ -57,10 +57,10 @@ public class GameManager : MonoBehaviour
             {
                 score++;
                 scoreText.text = string.Format("Score: {0}       Speed: {1:#.00}x", score, enemySpeed/3);
-                if (score % 100 == 0 && score > 150)
+                if (score % 85 == 0 && score > 150)
                 {
                     Debug.Log("yurrr");
-                    IncreaseSpeed(0.05f);
+                    IncreaseSpeed(0.15f, false);
                 }
             }
 
@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
             obj.GetComponent<EnemyCar>().SetSpeed(enemySpeed);
         }
 
-        if (!stop && increment >= 0.25f)
+        if (!stop && increment >= 0.3f)
         {
             Sequence fade = DOTween.Sequence().Pause();
 
