@@ -657,7 +657,6 @@ public class TileManager : MonoBehaviour
     {
         List<GameObject> deleted = new List<GameObject>();
         List<int> deletedCols = new List<int>();
-        int maxHeight = -1;
         int curCount = 0;
 
         Sequence replaceList = DOTween.Sequence().Pause()
@@ -779,9 +778,9 @@ public class TileManager : MonoBehaviour
             Vector3 position = new Vector3(xPos, yPos, 0);
 
             colReplace.Join(toMove[i].transform.DOMoveY(yPos, 0.5f + (i*0.07f)).SetEase(Ease.InOutQuad));
-
-
         }
+
+
 
         return colReplace;
 
@@ -833,7 +832,7 @@ public class TileManager : MonoBehaviour
             {
                 swap1.Kill();
 
-                yield return StartCoroutine(ReplaceMatch3sDynamic(0.3f));
+                yield return StartCoroutine(ReplaceMatch3sDynamic());
 
                 int num = GetMatchesCount() - 1;
 
