@@ -19,9 +19,10 @@ public class TileManager : MonoBehaviour
     GameObject[] tilePrefabs;
     [SerializeField] GameObject bounds;
 
-    [SerializeField] float spacing;
     [SerializeField] float xOffset;
     [SerializeField] float yOffset;
+    float xSpacing;
+    float ySpacing;
 
     public static TileManager tileManager;
 
@@ -59,8 +60,8 @@ public class TileManager : MonoBehaviour
 
 
         //spacing intervals for x and y
-        float xSpacing = xBounds / (columns - 1);
-        float ySpacing = yBounds / (rows - 1);
+        xSpacing = xBounds / (columns - 1);
+        ySpacing = yBounds / (rows - 1);
 
         //chooses random car tile prefab to instantiate
         //instantiates all car tiles evenly
@@ -686,6 +687,10 @@ public class TileManager : MonoBehaviour
 
         curCount = deleted.Count;
 
+        yield return new WaitUntil(() => !moving);
+
+        ReplaceCol(deleted.FindAll(obj => obj.GetComponent<CarTile>().GetColumn() == deletedCols[0]), deletedCols[0]);
+
 
 
 
@@ -699,32 +704,49 @@ public class TileManager : MonoBehaviour
         //yield return new WaitUntil(() => moving == false);
         if (curCount > 0)
         {
-            yield return StartCoroutine(ReplaceMatch3s(delay));
+            //yield return StartCoroutine(ReplaceMatch3s(delay));
         }
         Debug.Log("yeaovn");
     }
 
-    Sequence ColMove(List<GameObject> list, int col)
+    
+    Sequence ReplaceCol(List<GameObject> list, int col)
     {
-        int minRow = rows + 1;
+        float xPos = list[0].transform.position.x;
+        float yPos = tiles.Find(obj => obj.GetComponent<CarTile>().GetRow() == rows-1).transform.position.y;
+
+        List<GameObject> toMove = new List<GameObject>();
+
         foreach(GameObject obj in list)
         {
-            if(obj.GetComponent<CarTile>().GetRow() < minRow)
-            {
-                minRow = obj.GetComponent<CarTile>().GetRow();
-            }
+            obj.SetActive(false);
+            tiles.Remove(obj);
         }
 
-        //todo hide all in list
+        for(int i = 0; i < list.Count; i++)
+        {
+            Vector3 position = new Vector3(4.348005f, -5.415881f, 0);
 
-        int carNum = Random.Range(0, tilePrefabs.Length);
-        GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
-        carTile.GetComponent<CarTile>().SetCar(row, col, carNum);
-        tiles.Add(carTile);
+            int carNum = Random.Range(0, tilePrefabs.Length);
+            GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
+            carTile.GetComponent<CarTile>().SetCar(rows - 1 - i, col, carNum);
+
+            tiles.Add(carTile);
+            toMove.Add(carTile);
+
+        }
+
+        //todo move all cars into new spots
+
+        for (int i = toMove.Count - 1; i >= 0; i--)
+        {
+            Vector3 position = new Vector3(xPos, yPos - ((i + 1) * ySpacing ), 0);
+
+
+        }
+        return DOTween.Sequence();
 
     }
-
-    Sequence 
 
     IEnumerator ReplaceMatch3sAtStart()
     {
