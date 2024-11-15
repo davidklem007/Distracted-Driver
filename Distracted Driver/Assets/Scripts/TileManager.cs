@@ -653,7 +653,7 @@ public class TileManager : MonoBehaviour
         Debug.Log("yeaovn");
     }
 
-    IEnumerator ReplaceMatch3rd(float delay = 0)
+    IEnumerator ReplaceMatch3sDynamic()
     {
         List<GameObject> deleted = new List<GameObject>();
         List<int> deletedCols = new List<int>();
@@ -689,11 +689,10 @@ public class TileManager : MonoBehaviour
 
         yield return new WaitUntil(() => !moving);
 
-        ReplaceCol(deleted.FindAll(obj => obj.GetComponent<CarTile>().GetColumn() == deletedCols[0]), deletedCols[0]);
-
-
-
-
+        for(int i = 0; i < deletedCols.Count; i++)
+        {
+            replaceList.Join(ReplaceCol(deleted.FindAll(obj => obj.GetComponent<CarTile>().GetColumn() == deletedCols[i]), deletedCols[i]));
+        }
 
         replaceList.Play();
         if (replaceList != null && replaceList.IsActive())
@@ -701,10 +700,10 @@ public class TileManager : MonoBehaviour
             yield return replaceList.WaitForCompletion();
         }
 
-        //yield return new WaitUntil(() => moving == false);
+        yield return new WaitUntil(() => !moving);
         if (curCount > 0)
         {
-            //yield return StartCoroutine(ReplaceMatch3s(delay));
+            yield return StartCoroutine(ReplaceMatch3sDynamic());
         }
         Debug.Log("yeaovn");
     }
@@ -712,12 +711,33 @@ public class TileManager : MonoBehaviour
     
     Sequence ReplaceCol(List<GameObject> list, int col)
     {
+        Sequence colReplace = DOTween.Sequence().Pause();
+
         float xPos = list[0].transform.position.x;
-        float yPos = tiles.Find(obj => obj.GetComponent<CarTile>().GetRow() == rows-1).transform.position.y;
+
+        int maxHeight = 0;
+
+        foreach(GameObject obj in list)
+        {
+            if(obj.GetComponent<CarTile>().GetRow() > maxHeight)
+            {
+                maxHeight = obj.GetComponent<CarTile>().GetRow();
+            }
+        }
 
         List<GameObject> toMove = new List<GameObject>();
 
-        foreach(GameObject obj in list)
+        List<GameObject> rest = tiles.FindAll(obj => !list.Contains(obj) && obj.GetComponent<CarTile>().GetColumn() == col && obj.GetComponent<CarTile>().GetRow() > maxHeight);
+
+        foreach(GameObject obj in rest)
+        {
+            int row = obj.GetComponent<CarTile>().GetRow();
+            int num = obj.GetComponent<CarTile>().GetNum();
+            obj.GetComponent<CarTile>().SetCar(row - list.Count, col, num);
+            toMove.Add(obj);
+        }
+
+        foreach (GameObject obj in list)
         {
             obj.SetActive(false);
             tiles.Remove(obj);
@@ -725,7 +745,7 @@ public class TileManager : MonoBehaviour
 
         for(int i = 0; i < list.Count; i++)
         {
-            Vector3 position = new Vector3(4.348005f, -5.415881f, 0);
+            Vector3 position = new Vector3(xPos, -5.415881f, 0);
 
             int carNum = Random.Range(0, tilePrefabs.Length);
             GameObject carTile = Instantiate(tilePrefabs[carNum], position, Quaternion.identity);
@@ -736,15 +756,34 @@ public class TileManager : MonoBehaviour
 
         }
 
+        toMove.Sort((tile1, tile2) =>
+        {
+            CarTile carTile1 = tile1.GetComponent<CarTile>();
+            CarTile carTile2 = tile2.GetComponent<CarTile>();
+            int rowComparison = carTile1.GetRow().CompareTo(carTile2.GetRow());
+            return rowComparison;
+        });
+
+        foreach (GameObject obj in toMove)
+        {
+            Debug.Log(obj.GetComponent<CarTile>().GetRow() + ", " + obj.GetComponent<CarTile>().GetColumn());
+        }
+
         //todo move all cars into new spots
 
-        for (int i = toMove.Count - 1; i >= 0; i--)
+        for (int i = 0; i < toMove.Count; i++)
         {
-            Vector3 position = new Vector3(xPos, yPos - ((i + 1) * ySpacing ), 0);
+            int row = toMove[i].GetComponent<CarTile>().GetRow();
+            float yPos = tiles.Find(obj => obj.GetComponent<CarTile>().GetRow() == row && !obj.Equals(toMove[i])).transform.position.y;
+
+            Vector3 position = new Vector3(xPos, yPos, 0);
+
+            colReplace.Join(toMove[i].transform.DOMoveY(yPos, 0.5f + (i*0.07f)).SetEase(Ease.InOutQuad));
 
 
         }
-        return DOTween.Sequence();
+
+        return colReplace;
 
     }
 
@@ -794,7 +833,7 @@ public class TileManager : MonoBehaviour
             {
                 swap1.Kill();
 
-                yield return StartCoroutine(ReplaceMatch3s(0.3f));
+                yield return StartCoroutine(ReplaceMatch3sDynamic(0.3f));
 
                 int num = GetMatchesCount() - 1;
 
