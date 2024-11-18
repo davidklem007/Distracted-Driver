@@ -653,10 +653,14 @@ public class TileManager : MonoBehaviour
         Debug.Log("yeaovn");
     }
 
+    //dynamic tile replacing
     IEnumerator ReplaceMatch3sDynamic()
     {
+        //stores all tiles being deleted
         List<GameObject> deleted = new List<GameObject>();
+        //stores all unique columns that have tiles being deleted
         List<int> deletedCols = new List<int>();
+
         int curCount = 0;
 
         Sequence replaceList = DOTween.Sequence().Pause()
@@ -670,9 +674,10 @@ public class TileManager : MonoBehaviour
             //get all match 3s of those tiles
             List<GameObject> match3 = Match3(matches);
 
-            //if match 3s found, repeat process again
+            //for every tile in a set of 3
             foreach (GameObject obj in match3)
             {
+                //add tile to deleted list if it is not already there, and add column to deleted column list if not already there
                 if (!deleted.Contains(obj))
                 {
                     deleted.Add(obj);
@@ -684,10 +689,12 @@ public class TileManager : MonoBehaviour
             }
         }
 
+        //update count of tiles to be deleted
         curCount = deleted.Count;
 
         yield return new WaitUntil(() => !moving);
 
+        //add ReplaceCol sequence for each column with tiles being deleted
         for(int i = 0; i < deletedCols.Count; i++)
         {
             replaceList.Join(ReplaceCol(deleted.FindAll(obj => obj.GetComponent<CarTile>().GetColumn() == deletedCols[i]), deletedCols[i]));
@@ -702,20 +709,22 @@ public class TileManager : MonoBehaviour
         yield return new WaitUntil(() => !moving);
         if (curCount > 0)
         {
+            //if there was at least one set of 3, restart coroutine to replace any new sets of 3
             yield return StartCoroutine(ReplaceMatch3sDynamic());
         }
-        Debug.Log("yeaovn");
     }
 
-    
+    //replace all tiles in list from column col
     Sequence ReplaceCol(List<GameObject> list, int col)
     {
         Sequence colReplace = DOTween.Sequence().Pause();
 
+        //x position of the column
         float xPos = list[0].transform.position.x;
 
         int maxHeight = 0;
 
+        //find the highest tile being deleted
         foreach(GameObject obj in list)
         {
             if(obj.GetComponent<CarTile>().GetRow() > maxHeight)
@@ -724,10 +733,14 @@ public class TileManager : MonoBehaviour
             }
         }
 
+        //stores every tile in the column that needs to be moved
         List<GameObject> toMove = new List<GameObject>();
 
+        //all tiles that are not in list to be deleted, are in the given column, and are below (visually) the highest row tile being deleted
+        //in other words, these are all the current tiles that will need to be moved to a new position
         List<GameObject> rest = tiles.FindAll(obj => !list.Contains(obj) && obj.GetComponent<CarTile>().GetColumn() == col && obj.GetComponent<CarTile>().GetRow() > maxHeight);
 
+        //set the new row and column for the tiles in rest, then add them to toMove list
         foreach(GameObject obj in rest)
         {
             int row = obj.GetComponent<CarTile>().GetRow();
@@ -736,12 +749,15 @@ public class TileManager : MonoBehaviour
             toMove.Add(obj);
         }
 
+        //hide tiles to be deleted and remove them from the tiles list
         foreach (GameObject obj in list)
         {
             obj.SetActive(false);
             tiles.Remove(obj);
         }
 
+        //spawns new tiles off screen
+        //sets their new car coordinates and add them to tiles list and then toMove list
         for(int i = 0; i < list.Count; i++)
         {
             Vector3 position = new Vector3(xPos, -5.415881f, 0);
@@ -755,6 +771,7 @@ public class TileManager : MonoBehaviour
 
         }
 
+        //sort toMove list by row, lowest to highest row num
         toMove.Sort((tile1, tile2) =>
         {
             CarTile carTile1 = tile1.GetComponent<CarTile>();
@@ -768,16 +785,22 @@ public class TileManager : MonoBehaviour
             Debug.Log(obj.GetComponent<CarTile>().GetRow() + ", " + obj.GetComponent<CarTile>().GetColumn());
         }
 
-        //todo move all cars into new spots
 
+        //move each tile in toMove to their new position
         for (int i = 0; i < toMove.Count; i++)
         {
             int row = toMove[i].GetComponent<CarTile>().GetRow();
-            float yPos = tiles.Find(obj => obj.GetComponent<CarTile>().GetRow() == row && !obj.Equals(toMove[i])).transform.position.y;
+            float yPos = transform.TransformPoint(new Vector3(xPos, (-row * ySpacing) - yOffset, 0)).y;
 
             Vector3 position = new Vector3(xPos, yPos, 0);
 
             colReplace.Join(toMove[i].transform.DOMoveY(yPos, 0.5f + (i*0.07f)).SetEase(Ease.InOutQuad));
+        }
+
+        //delete all tiles in deleted list to free up memory
+        foreach(GameObject obj in list)
+        {
+            Destroy(obj);
         }
 
 
@@ -811,12 +834,13 @@ public class TileManager : MonoBehaviour
 
             yield return swap1.Append(SwapTiles(carTile1, carTile2)).WaitForCompletion();
 
+            //run match3 check to have match3sCount
             Match3(AdjacentMatches(carTile1));
             Match3(AdjacentMatches(carTile2));
 
             if (match3sCount == 0)
             {
-                yield return new WaitForSeconds(0.15f);
+                yield return new WaitForSeconds(0.1f);
 
                 Sequence swap2 = DOTween.Sequence().SetAutoKill(false);
 
