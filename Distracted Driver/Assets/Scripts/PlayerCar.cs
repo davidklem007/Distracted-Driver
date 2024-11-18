@@ -13,6 +13,7 @@ public class PlayerCar : MonoBehaviour
     float leftBounds = -6.14f;
     float middleBounds = -4.43f;
     bool stop = false;
+    int lives = 2;
 
     // Start is called before the first frame update
     void Start()
@@ -131,7 +132,12 @@ public class PlayerCar : MonoBehaviour
         if (collision.gameObject.tag == "Enemy")
         {
             Destroy(collision.gameObject);
-            EventManager.GameOver.Invoke();
+            lives--;
+            if (lives <= 0)
+            {
+                EventManager.GameOver.Invoke();
+            }
+            
         }
 
     }

@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < (int) enemySpeed; i++)
             {
                 score++;
-                scoreText.text = string.Format("Score: {0}       Speed: {1:#.00}x", score, enemySpeed/3);
+                scoreText.text = string.Format("Score: {0}       Speed: {1:#00}mph", score, (enemySpeed/3)*60);
                 if (score % 85 == 0 && score > 150)
                 {
                     Debug.Log("yurrr");
