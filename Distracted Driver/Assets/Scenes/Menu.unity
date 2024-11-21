@@ -1267,7 +1267,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road Lines
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1737552308090349770, guid: fa47d3e845f444587bbcb8fb70e0acc1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -744,8 +744,6 @@ public class TileManager : MonoBehaviour
 
                 int num = GetMatchesCount() -1;
 
-                Debug.Log(num);
-
                 for (int i = 0; i < num; i++)
                 {
                     GameManager.gameManager.DecreaseSpeed();
