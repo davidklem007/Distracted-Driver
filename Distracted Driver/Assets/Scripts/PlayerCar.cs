@@ -13,7 +13,7 @@ public class PlayerCar : MonoBehaviour
     float leftBounds = -6.14f;
     float middleBounds = -4.43f;
     bool stop = false;
-    int lives = 2000;
+    int lives = 1;
 
     // Start is called before the first frame update
     void Start()

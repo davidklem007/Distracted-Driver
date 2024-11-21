@@ -678,22 +678,6 @@ public class TileManager : MonoBehaviour
 
             carTile.GetComponent<CarTile>().SetCar(rows - 1 - i, col, carNum);
 
-
-            if (tiles.Exists(tile => tile.GetComponent<CarTile>().GetRow() == newRow && tile.GetComponent<CarTile>().GetColumn() == col))
-            {
-                GameObject g = tiles.Find(tile => tile.GetComponent<CarTile>().GetRow() == newRow && tile.GetComponent<CarTile>().GetColumn() == col);
-                Debug.Log("this: (" + g.GetComponent<CarTile>().GetRow() + ", " + g.GetComponent<CarTile>().GetColumn() + ")");
-                foreach (GameObject e in island)
-                {
-                    Debug.Log("island: (" + e.GetComponent<CarTile>().GetRow() + ", " + e.GetComponent<CarTile>().GetColumn() + ")");
-                }
-                foreach (GameObject e in list)
-                {
-                    Debug.Log("not: (" + e.GetComponent<CarTile>().GetRow() + ", " + e.GetComponent<CarTile>().GetColumn() + ")");
-                }
-                Debug.Break();
-            }
-
             tiles.Add(carTile);
             toMove.Add(carTile);
 
