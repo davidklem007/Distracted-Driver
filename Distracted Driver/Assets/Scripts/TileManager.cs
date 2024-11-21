@@ -309,12 +309,10 @@ public class TileManager : MonoBehaviour
             //get horizontally adjacent tile
             GameObject horizontal = GetHorizontalAdjacent(matches[i]);
 
-            //if there is a horizontally adjacent tile 
-            if (horizontal != null)
+            //if there is a horizontally adjacent tile
+            //check if the horizontally adjacent tile is the same as the next tile in the list of matching tiles
+            if (horizontal != null && matches[i + 1].GetComponent<CarTile>().Equals(horizontal.GetComponent<CarTile>()))
             {
-                //check if the horizontally adjacent tile is the same as the next tile in the list of matching tiles
-                if (matches[i + 1].GetComponent<CarTile>().Equals(GetHorizontalAdjacent(matches[i]).GetComponent<CarTile>()))
-                {
                     //if there are no previous matching tiles in the row connected to the current tile,
                     //add 2 to matched tiles count since we are counting 2 at a time we count those two tiles
                     //if there are already matching tiles in the set, just add 1 because of the 2 that are checked, one of them was already counted for
@@ -326,21 +324,12 @@ public class TileManager : MonoBehaviour
                     {
                         matchingTileCount++;
                     }
-                }
-                //if the two tiles checked aren't matching and in the same row
-                else
-                {
-                    //this is to check the tiles that came before
-                    //if there were at least three matching tiles before, add all of them to the matches3 list if they are not already in that list
-                    //then reset the matched count because we will check a new row next
-                    if (matchingTileCount >= 3)
-                    {
-                        AddMatchGroup(matches, matches3, i, matchingTileCount);
-                    }
-                    matchingTileCount = 0;
-                }
+                
+                
+
             }
             //if there isn't a horizontally adjacent tile (current tile is on an edge)
+            //if the two tiles checked aren't matching and in the same row
             else
             {
                 //since we are at the end of the row now, add previous tiles to the match3 list if there was a match3
@@ -389,10 +378,8 @@ public class TileManager : MonoBehaviour
         {
             GameObject vertical = GetVerticalAdjacent(matches[i]);
 
-            if(vertical != null)
+            if(vertical != null && matches[i + 1].GetComponent<CarTile>().Equals(vertical.GetComponent<CarTile>()))
             {
-                if (matches[i + 1].GetComponent<CarTile>().Equals(GetVerticalAdjacent(matches[i]).GetComponent<CarTile>()))
-                {
                     if (matchingTileCount == 0)
                     {
                         matchingTileCount += 2;
@@ -401,15 +388,7 @@ public class TileManager : MonoBehaviour
                     {
                         matchingTileCount++;
                     }
-                }
-                else
-                {
-                    if (matchingTileCount >= 3)
-                    {
-                        AddMatchGroup(matches, matches3, i, matchingTileCount);
-                    }
-                    matchingTileCount = 0;
-                }
+
             }
             else
             {
@@ -423,10 +402,9 @@ public class TileManager : MonoBehaviour
 
         if (matchingTileCount >= 3)
         {
-            for (int x = 0; x < matchingTileCount; x++)
-            {
-                AddMatchGroup(matches, matches3, matches.Count - 1, matchingTileCount);
-            }
+
+            AddMatchGroup(matches, matches3, matches.Count - 1, matchingTileCount);
+
         }
 
         return matches3;
@@ -764,7 +742,7 @@ public class TileManager : MonoBehaviour
 
                 yield return StartCoroutine(ReplaceMatch3sDynamic());
 
-                int num = GetMatchesCount() - 1;
+                int num = GetMatchesCount() -1;
 
                 Debug.Log(num);
 
