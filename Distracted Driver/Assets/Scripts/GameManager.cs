@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour
                 scoreText.text = string.Format("Score: {0}       Speed: {1:#00}mph", score, (enemySpeed/3)*60);
                 if (score % 85 == 0 && score > 150)
                 {
-                    Debug.Log("yurrr");
                     IncreaseSpeed(0.15f, false);
                 }
             }

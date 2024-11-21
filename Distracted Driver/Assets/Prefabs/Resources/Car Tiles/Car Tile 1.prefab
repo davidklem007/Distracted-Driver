@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f219c0cd08ce846ed92921651bb7582f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileManagerObj: {fileID: 5236542589740683746, guid: 7dbb10a71e3ca4d4f8fcc23031ebd693, type: 3}
   scale: 1.75
-  column: 0
   row: 0
+  column: 0
+  num: 0
