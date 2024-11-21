@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
             {
                 score++;
                 scoreText.text = string.Format("Score: {0}       Speed: {1:#00}mph", score, enemySpeed/3*60);
-                if (score % 15 == 0 && score > 150)
+                if (score % 15 == 0 && score > 100)
                 {
                     IncreaseSpeed(0.05f, false);
                 }
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     public float DecreaseSpeed(float increment = 0.03f)
     {
-        increment += ((enemySpeed / 3) - 1) / 50;
+        increment += ((enemySpeed / 3) - 1) / 25;
 
         enemySpeed -= enemySpeed * increment;
 
