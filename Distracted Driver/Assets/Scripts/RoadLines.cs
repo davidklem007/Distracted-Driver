@@ -29,7 +29,7 @@ public class RoadLines : MonoBehaviour
 
     void Scroll()
     {
-        if(Vector3.Distance(transform.position, RoadLines1.transform.position) > 9.88f || Vector3.Distance(transform.position, RoadLines1.transform.position) < 9.84f)
+        if(Vector3.Distance(transform.position, RoadLines1.transform.position) > 10f || Vector3.Distance(transform.position, RoadLines1.transform.position) < 9.6f)
         {
             transform.position = startPos;
             RoadLines1.transform.position = startPos1;

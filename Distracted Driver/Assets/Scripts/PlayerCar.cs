@@ -8,6 +8,7 @@ public class PlayerCar : MonoBehaviour
     [SerializeField] float horizontalSpeed;
     bool isMovingHorizontally = false;
     int lane = 2;
+    Stack<Tween> moves = new Stack<Tween>();
     [SerializeField] float verticalSpeed;
     float rightBounds = -2.72f;
     float leftBounds = -6.14f;
@@ -48,6 +49,10 @@ public class PlayerCar : MonoBehaviour
         {
             LaneNumChange(input);
             LaneChange();
+        }
+        else if(input == 0)
+        {
+            SetMovingHorizontally(false);
         }
     }
 
